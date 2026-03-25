@@ -1,0 +1,91 @@
+pt-BR:
+  label_vault: 'Senhas'
+  label_module: 'Acessos'
+  settings:
+    title: "Configuração de senhas"
+    vault_title_encription_key: "Criptografia da chave"
+    redmine_title_encription_key: "Use Criptografia Redmine"
+    vault_encription_notice: "Usado apenas pelo método de criptografia do Vault"
+    redmine_encryption_notice: "Recomendado. Não esqueça de colocar sua chave em database_cipher_key em config / configuration.yml. IMPORTANTE: execute o rake redmine: plugins: vault: converte depois de mudar este interruptor."
+
+  backups:
+    title: "Backup acessos"
+    title_restore: "Restaurar backup"
+    btn:
+      download_backup: "Download"
+      upload_backup: "Restaurar"
+
+  export:
+    title:
+      pdf: "PDF"
+    pdf:
+      title: "Acessos"
+
+  tag:
+    title:
+      popular: "Tags Populares"
+
+  key:
+    title:
+      delete: "Excluir acesso"
+      edit: "Editar acesso"
+      copy: "Copiar acesso"
+      clone: "Clonar acesso"
+      show: "Mostar acesso"
+      new: "Novo acesso"
+      list: "Busca"
+
+    btn:
+      new: "Novo acesso"
+      actions: "Ações"
+      clipboard: "Copiar para área de transferência"
+
+    attr:
+      lock: "Bloqueado"
+      owner: "Proprietário"
+      body: "Senha"
+      name: "Nome"
+      login: "Login"
+      url: "URL"
+      type: "Tipo"
+      tags: "Marcadores"
+      file: "Arquivo de senha"
+      comment: "Comentário"
+      whitelist: "Membros"
+
+    whitelist:
+      selected_members: "Membros selecionados"
+      available_members: "Membros disponíveis"
+
+  context_menu:
+    copy_key: "Copiar senha"
+    copy_url: "Copiar URL"
+    copy_login: "Copiar login"
+    delete: "Excluir acesso"
+    edit: "Excluir acesso"
+    clone: "Clonar acesso"
+
+  alert:
+    key:
+      not_found: "Acesso não encotrado"
+
+  confirm:
+    key:
+      delete: "Deseja excluir o acesso selecionado?"
+
+  notice:
+    settings:
+      saved: "Configurações salvas com sucesso"
+      keys_restore: "Acesso restaurados"
+    key:
+      update:
+        success: "O acesso foi modificado com sucesso"
+      delete:
+        success: "O acesso foi excluido com sucesso"
+      create:
+        success: "O acesso foi criado com sucesso"
+
+  error:
+    key:
+      not_set: "A chave de criptografia não está definida nas configurações"
+      not_whitelisted: "Você não possuí permissão ao acesso"

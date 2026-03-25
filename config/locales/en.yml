@@ -1,0 +1,93 @@
+# English strings go here for Rails i18n
+en:
+  label_vault: 'Vault'
+  label_module: 'Passwords'
+  settings:
+    title: "Passwords settings"
+    vault_title_encription_key: "Encryption Key"
+    redmine_title_encription_key: "Use Redmine Encryption"
+    vault_encription_notice: "Used only by VaultEencryption Method"
+    redmine_encryption_notice: "Recommended. Don't forget to put your key into database_cipher_key in config/configuration.yml. IMPORTANT: run rake redmine:plugins:vault:convert after changing this switch."
+
+  backups:
+    title: "Backup Passwords"
+    title_restore: "Restore from backup"
+    btn:
+      download_backup: "Download backup"
+      upload_backup: "Restore from backup"
+
+  export:
+    title:
+      pdf: "PDF"
+    pdf:
+      title: "Passwords"
+
+  tag:
+    title:
+      popular: "Popular Tags"
+
+  key:
+    title:
+      delete: "Delete Password"
+      edit: "Editing Password"
+      copy: "Copy Password"
+      clone: "Clone Password"
+      show: "Showing Password"
+      new: "New Password"
+      list: "List of Passwords"
+
+    btn:
+      new: "New Password"
+      actions: "Actions"
+      clipboard: "Copy to Clipboard"
+
+    attr:
+      lock: "Lock"
+      owner: "Owner"
+      body: "Password"
+      name: "Name"
+      login: "Login"
+      url: "URL"
+      type: "Type"
+      tags: "Tags"
+      file: "Password File"
+      comment: "Comment"
+      whitelist: "Access list"
+
+    whitelist:
+      selected_members: "Selected Members"
+      available_members: "Available Members"
+
+  context_menu:
+    copy_key: "Copy Password"
+    copy_url: "Copy URL"
+    copy_login: "Copy Login"
+    delete: "Delete Password"
+    edit: "Edit Password"
+    clone: "Clone Password"
+
+  alert:
+    key:
+      not_found: "Password not found"
+
+  confirm:
+    key:
+      delete: "Do you want to delete this Password?"
+
+  notice:
+    settings:
+      saved: "Settings saved"
+      keys_restore: "Passwords restored"
+    key:
+      update:
+        success: "Password was successfully modified"
+      delete:
+        success: "Password was successfully deleted"
+      create:
+        success: "Password was successfully created"
+
+  error:
+    key:
+      not_set: "The encryption key is not set in the settings"
+      not_whitelisted: "Password not allowed for you"
+      length: "Encryption key must be at exact 16 symbols"

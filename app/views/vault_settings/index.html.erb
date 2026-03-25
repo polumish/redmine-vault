@@ -1,0 +1,54 @@
+<h2><%= t('settings.title') %></h2>
+
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag "font-awesome.css", :plugin => "vault" %>
+    <%= stylesheet_link_tag "font-awesome.min.css", :plugin => "vault" %>
+    <%= javascript_include_tag 'vault', :plugin => 'vault' %>
+<% end %>
+
+<div id="settings">
+  <%= form_tag({:action => :save}) do %>
+      <div class="box tabular settings">
+        <table>
+          <tbody>
+          <tr>
+            <th><%= t('settings.vault_title_encription_key') %></th>
+            <td>
+              <input type="text" id="settings_encryption_key" value="<%= Setting.plugin_vault['encryption_key'] %>" name="settings[encryption_key]" >
+              <%= t('settings.vault_encription_notice') %>
+            </td>
+          </tr>
+          <tr>
+            <th><%= t('settings.redmine_title_encription_key') %></th>
+            <td>
+              <%= check_box_tag('settings[use_redmine_encryption]',Setting.plugin_vault['use_redmine_encryption'], Setting.plugin_vault['use_redmine_encryption']) %>
+              <%= t('settings.redmine_encryption_notice') %>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <%= submit_tag l(:button_apply) %>
+  <% end %>
+</div>
+</br>
+<div id="settings">
+  <div class="box tabular settings">
+    <table>
+      <tr>
+        <th style="text-align:left"> <%= t('backups.title') %> </th>
+        <th style="text-align:right"> <%= button_to(t('backups.btn.download_backup'), :action => :backup)%> </th>
+      </tr>
+
+      <tr>
+        <th style="text-align:left"> <%= t('backups.title_restore') %> </th>
+        <th style="text-align:right">
+          <%= form_tag({:action => :restore}, method: 'post',multipart: true) do %>
+              <%= file_field_tag :file %>
+            <%= submit_tag(t('backups.btn.upload_backup')) %>
+          <% end %>
+        </th>
+      </tr>
+    </table>
+  </div>
+</div>
