@@ -1,13 +1,9 @@
 module Vault
   require 'csv'
-  require 'iconv'
 
   class Vault::Key < ActiveRecord::Base
     belongs_to :project
     has_and_belongs_to_many :tags
-    unloadable
-
-    attr_accessible :project_id, :name, :body, :login, :type, :file, :project, :url, :comment, :whitelist
 
     #def tags=(tags_string)
     #  @tags = Vault::Tag.create_from_string(tags_string)

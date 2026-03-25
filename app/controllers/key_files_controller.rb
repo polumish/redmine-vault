@@ -1,6 +1,4 @@
 class KeyFilesController < ApplicationController
-   unloadable
- 
    before_action :find_project_by_project_id
    before_action :authorize
 

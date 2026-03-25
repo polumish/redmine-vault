@@ -1,6 +1,4 @@
 class KeysController < ApplicationController
-  unloadable
-
   before_action :find_project_by_project_id
   before_action :authorize
   before_action :find_key, only: [ :show, :edit, :update, :destroy, :copy ]
@@ -109,7 +107,7 @@ class KeysController < ApplicationController
 
       self.update_wishlist
 
-      if @key.update_attributes(params[:vault_key])
+      if @key.update(key_params)
         @key.tags = Vault::Tag.create_from_string(key_params[:tags])
         format.html { redirect_to project_keys_path(@project), notice: t('notice.key.update.success') }
       else
