@@ -16,7 +16,7 @@ require File.expand_path('vendor/project_patch', __dir__)
 # Hook for stylesheet
 class VaultViewHook < Redmine::Hook::ViewListener
   def view_layouts_base_html_head(context = {})
-    stylesheet_link_tag('vault', plugin: 'vault')
+    stylesheet_link_tag('vault', plugin: 'vault') + javascript_include_tag('vault', plugin: 'vault')
   end
 end
 
@@ -30,7 +30,7 @@ Redmine::Plugin.register :vault do
 
   project_module :keys do
     permission :export_keys, keys: [ :keys_to_pdf ]
-    permission :download_keys, key_files: [ :download ]
+    permission :download_keys, key_files: [ :download, :preview ]
     permission :view_keys, keys: [ :index, :edit, :show, :context_menu ]
     permission :edit_keys, keys: [ :index, :new, :create, :edit, :show, :update, :destroy, :copy ]
     permission :manage_whitelist_keys, keys: [ :index, :create, :edit, :show, :update, :copy ]
