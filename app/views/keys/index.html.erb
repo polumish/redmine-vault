@@ -50,15 +50,7 @@
 </table>
 <% end %>
 
-<% if Redmine::VERSION.to_s.start_with?('3.3')  %>
-    <span class='pagination'><%= pagination_links_full @key_pages, @key_count %></span>
-<% elsif Redmine::VERSION.to_s.start_with?('3.2') %>
-    <span class='pagination'><%= pagination_links_full @key_pages, @key_count %></span>
-<% elsif Redmine::VERSION.to_s.start_with?('3.1') %>
-    <span class='pagination'><%= pagination_links_full @key_pages, @key_count %></span>
-<% else %>
-    <span class='pagination'><%= pagination_links_full @key_pages, @key_count %></span>
-<% end %>
+<%= context_menu %>
 
 <% other_formats_links do |f| %>
     <%= f.link_to_with_query_parameters t('export.title.pdf') if User.current.allowed_to?(:view_keys, @project) if User.current.allowed_to?(:export_keys, @project)%>
@@ -75,11 +67,7 @@
   </div>
 <% end %>
 
-<% if Redmine::VERSION.to_s.start_with?('3.4') or Redmine::VERSION.to_s.start_with?('4')  %>
-    <%= context_menu %>
-<% else %>
-    <%= context_menu project_keys_context_menus_path(@project) %>
-<% end %>
+<%= context_menu %>
 
 <script type="text/javascript">
   $('a[href^="http://"]').attr('target','_blank');
