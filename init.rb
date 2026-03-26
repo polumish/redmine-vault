@@ -1,10 +1,24 @@
-require_relative 'lib/encryptor'
-require_relative 'lib/redmine_cipher'
-require_relative 'lib/vault_cipher'
-require_relative 'lib/null_cipher'
-require_relative 'lib/project_patch'
-require_relative 'lib/mk_keyfiles_dir'
-require_relative 'lib/admin_menu_vault_hooks'
+# Vault constants
+module Vault
+  KEYFILES_DIR = "#{Rails.root}/keys".freeze
+end
+Dir.mkdir(Vault::KEYFILES_DIR) unless Dir.exist?(Vault::KEYFILES_DIR)
+
+# Load cipher modules (order matters)
+require File.expand_path('vendor/null_cipher', __dir__)
+require File.expand_path('vendor/vault_cipher', __dir__)
+require File.expand_path('vendor/redmine_cipher', __dir__)
+require File.expand_path('vendor/encryptor', __dir__)
+
+# Project association
+require File.expand_path('vendor/project_patch', __dir__)
+
+# Hook for stylesheet
+class VaultViewHook < Redmine::Hook::ViewListener
+  def view_layouts_base_html_head(context = {})
+    stylesheet_link_tag('vault', plugin: 'vault')
+  end
+end
 
 Redmine::Plugin.register :vault do
   name 'Vault plugin'
@@ -24,10 +38,6 @@ Redmine::Plugin.register :vault do
   end
 
   menu :project_menu, :keys, { controller: 'keys', action: 'index' }, caption: Proc.new {I18n.t('label_module')}, after: :activity, param: :project_id
-  settings :default => {
-               'empty' => true
-           },
-           :partial => 'settings/vault_settings'
-
-  menu :admin_menu, :vault, {:controller => 'vault_settings', :action => 'index'}, :caption => :label_vault, :html => {:class => 'icon'}
+  settings default: { 'empty' => true }, partial: 'settings/vault_settings'
+  menu :admin_menu, :vault, { controller: 'vault_settings', action: 'index' }, caption: :label_vault, html: { class: 'icon' }
 end
