@@ -89,8 +89,9 @@ curl -sS -o id_ed25519 \
 
 Inline preview: `/projects/<proj>/key_files/<id>/preview`.
 
-> Files are always encrypted at rest. If the configured cipher is Null, file
-> encryption falls back to Redmine's built-in ciphering. See `docs/encryption.md`.
+> Files are always encrypted at rest (AES-256-GCM, key derived from Redmine's
+> `secret_key_base`), independent of the body-cipher setting. See
+> `docs/encryption.md`.
 
 ## Key object shape
 

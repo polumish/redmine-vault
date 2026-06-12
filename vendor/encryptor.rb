@@ -18,22 +18,6 @@ module Encryptor
     return VaultCipher
   end
 
-  # Files must ALWAYS be encrypted at rest. If the configured engine performs no
-  # encryption (NullCipher), fall back to Redmine's built-in ciphering so file
-  # contents are never stored in plaintext.
-  def self.file_engine
-    e = engine
-    e == NullCipher ? RedmineCipher : e
-  end
-
-  def self.encrypt_file(data, options={})
-    (options[:engine] || file_engine).encrypt_text(data)
-  end
-
-  def self.decrypt_file(data, options={})
-    (options[:engine] || file_engine).decrypt_text(data)
-  end
-
   def self.encrypt_all(model, attr, options={} )
     model.transaction do
       model.all.each do |p|

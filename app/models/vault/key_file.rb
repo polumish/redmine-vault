@@ -8,7 +8,7 @@ module Vault
     # name-only update does not re-encrypt the already-ciphertext value.
     def encrypt_file!
       if file_data_changed? && !file_data.nil?
-        self.file_data = Encryptor.encrypt_file(file_data)
+        self.file_data = FileCipher.encrypt(file_data)
       end
       self
     end
@@ -16,7 +16,7 @@ module Vault
     # Non-mutating reader: returns the decrypted file bytes (or nil).
     def decrypt_file
       return nil if file_data.nil?
-      Encryptor.decrypt_file(file_data)
+      FileCipher.decrypt(file_data)
     end
 
     # Assign an uploaded file (ActionDispatch::Http::UploadedFile): store the

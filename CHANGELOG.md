@@ -1,9 +1,15 @@
+## Version: 0.5.3 (12.06.2026)
+### Security
+- Key files are encrypted with a dedicated always-on cipher (`FileCipher`,
+  AES-256-GCM, key derived from Redmine's `secret_key_base`) instead of the
+  configurable body cipher. This guarantees encryption even when the body cipher
+  is unconfigured/Null, fixes plaintext-at-rest, and preserves binary content
+  (no newline stripping). Key is on disk, not in the DB dump.
+
 ## Version: 0.5.2 (12.06.2026)
 ### Security / Features
 - Key files (`Vault::KeyFile`) are now stored **encrypted in the database**
-  (`keys.file_data`), not in plaintext on disk. Files are always encrypted: if
-  the configured cipher is Null, encryption falls back to Redmine's built-in
-  ciphering (`Encryptor.file_engine`).
+  (`keys.file_data`), not in plaintext on disk. (Encryption hardened in 0.5.3.)
 - Download/preview now serve the decrypted bytes from the DB and accept a Redmine
   API key (`accept_api_auth`). Migration 011 moves any existing on-disk files into
   the encrypted column; disk copies are removed on deploy (backed up first).

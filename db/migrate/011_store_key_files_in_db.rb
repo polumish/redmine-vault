@@ -14,7 +14,7 @@ class StoreKeyFilesInDb < ActiveRecord::Migration[4.2]
         next unless File.file?(path)
         content = File.binread(path)
         kf.update_columns(
-          file_data: Encryptor.encrypt_file(content),
+          file_data: FileCipher.encrypt(content),
           file: (kf.name.presence || kf.file)
         )
         migrated += 1

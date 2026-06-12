@@ -32,11 +32,18 @@ plugin's `Encryptor.encrypt_all` / `decrypt_all` helpers (back up first).
 ## Key files
 
 Since 0.5.2, `Vault::KeyFile` contents are stored encrypted in the database
-column `keys.file_data` (never in plaintext on disk). File encryption is
-**mandatory**: `Encryptor.file_engine` uses the configured cipher, but if that is
-`NullCipher` it falls back to `RedmineCipher` so files are never stored in
-plaintext. (This still requires Redmine's `database_cipher_key` to be set in
-`config/configuration.yml` for the fallback to actually encrypt.)
+column `keys.file_data` (never in plaintext on disk). Since 0.5.3 they use a
+dedicated, always-on cipher independent of the body-cipher setting:
+
+- `FileCipher` — **AES-256-GCM** (authenticated: confidentiality + tamper
+  detection), random IV per file, binary-safe.
+- Key = `SHA256("redmine-vault:file-cipher:" + Rails.secret_key_base)`. The
+  `secret_key_base` lives in Redmine's config on disk, **not** in the database,
+  so a DB dump alone cannot decrypt files.
+
+This makes file encryption truly mandatory regardless of the body cipher
+(Null/Vault/Redmine). Caveat: regenerating Redmine's secret token would make
+existing `file_data` undecryptable (same blast radius as session invalidation).
 
 ## Future work (out of scope this round)
 
