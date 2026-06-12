@@ -21,11 +21,11 @@ class VaultViewHook < Redmine::Hook::ViewListener
 end
 
 Redmine::Plugin.register :vault do
-  name 'Vault plugin'
+  name 'Vault plugin (fork)'
   author 'noshutdown.ru'
-  description 'Plugin for keep keys and passwords'
-  version '0.5.0'
-  url 'https://noshutdown.ru/redmine-plugins-vault/'
+  description 'Plugin for keep keys and passwords. Fork of noshutdown.ru/redmine-plugins-vault'
+  version '0.5.1'
+  url 'https://git.half.net.ua/polumish/redmine-vault'
   author_url 'https://noshutdown.ru/'
 
   project_module :keys do

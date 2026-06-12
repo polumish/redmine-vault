@@ -1,34 +1,36 @@
 module Vault
   class Tag < ActiveRecord::Base
     self.table_name = 'vault_tags'
+    belongs_to :project
     has_and_belongs_to_many :keys
 
-    validates :name, presence: true, uniqueness: true
+    validates :name, presence: true, uniqueness: { scope: :project_id }
 
-    def Tag::create_from_string(string)
+    # Parse a comma-separated string into persisted Tag records scoped to a
+    # project. Null-safe and idempotent: blank/duplicate names are dropped and
+    # existing tags are reused, so the result never contains nil (which would
+    # raise AssociationTypeMismatch when assigned to a key's HABTM collection).
+    def self.create_from_string(string, project)
       return [] if string.blank?
 
-      words = string.downcase.split(/,\s*/).map(&:strip)
-      Tag.create(words.map { |t| {name: t} })
-      tags = Tag.all.reduce({}) { |tags, t| tags.merge({t.name => t}) }
-      return words.map { |w| tags[w] }
+      names = string.downcase.split(/,\s*/).map(&:strip).reject(&:blank?).uniq
+      names.map { |name| where(project_id: project.id).find_or_create_by(name: name) }
+           .select(&:persisted?)
     end
 
-    def Tag::tags_to_string(tags)
+    def self.tags_to_string(tags)
       return '' if tags.empty?
-      return (tags.map { |t| t.name }).join(', ')
+      tags.map(&:name).join(', ')
     end
 
-    def Tag::cloud_for_project(pid)
-      tags_with_score = Vault::Tag.joins(:keys).where(keys: {project_id: pid}).group('vault_tags.name').count
-      (tags_with_score.sort_by { |tag,count| count }).map(&:first).reverse.take(20)
+    def self.cloud_for_project(pid)
+      tags_with_score = joins(:keys).where(vault_tags: { project_id: pid })
+                                    .group('vault_tags.name').count
+      tags_with_score.sort_by { |_tag, count| count }.map(&:first).reverse.take(20)
     end
 
-    def Tag::tags_list(pid)
-      tags_with_score = Vault::Tag.joins(:keys).where(
-          keys: {project_id: pid}
-      ).group('vault_tags.name').group('vault_tags.id').map(&:name) #OPTIMIZE_ME!
+    def self.tags_list(pid)
+      where(project_id: pid).order(:name).pluck(:name)
     end
-
   end
 end

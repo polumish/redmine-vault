@@ -1,3 +1,18 @@
+## Version: 0.5.1 (12.06.2026)
+### Bugfixes
+- Fixed HTTP 500 when adding tags — `Vault::Tag.create_from_string` is now
+  null-safe and idempotent (blank/duplicate names dropped, existing tags reused).
+- `Vault::Key.import` wrote the comment value into the whitelist column; now reads
+  the correct field and logs failures instead of silently swallowing them.
+### Features
+- Tags are now scoped per project (no more name collisions between clients).
+- JSON write API: `create`/`update`/`destroy` accept a Redmine API key, so keys can
+  be managed without the web session + CSRF workaround. Tags accept a string or an
+  array. See `docs/api-usage.md`.
+### Notes
+- Documented the AES-128-ECB weakness of the default cipher — see
+  `docs/encryption.md`.
+
 ## Version: 0.4.3 (10.05.2021)
 ### Bugfix
 - [Saving settings path](https://github.com/noshutdown-ru/vault/pull/67)

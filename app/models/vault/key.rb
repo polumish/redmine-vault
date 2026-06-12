@@ -3,11 +3,7 @@ module Vault
 
   class Vault::Key < ActiveRecord::Base
     belongs_to :project
-    has_and_belongs_to_many :tags
-
-    #def tags=(tags_string)
-    #  @tags = Vault::Tag.create_from_string(tags_string)
-    #end
+    has_and_belongs_to_many :tags, class_name: 'Vault::Tag'
 
     def encrypt!
       self
@@ -25,39 +21,26 @@ module Vault
 
 				key = Vault::Key.where("name = ?", rhash['name']).first
 		
-				unless key
-					begin
-						Vault::Key.create(
-							project_id: rhash['project_id'],
-							name: rhash['name'],
-							body: decryptb,
-							login: rhash['login'],
-							type: rhash['type'],
-							file: rhash['file'],
-							url: rhash['url'],
-							comment: rhash['comment'],
-							whitelist: rhash['comment']
-						).update_column(:id, rhash['id'])
-					rescue
+				attrs = {
+					project_id: rhash['project_id'],
+					name: rhash['name'],
+					body: decryptb,
+					login: rhash['login'],
+					type: rhash['type'],
+					file: rhash['file'],
+					url: rhash['url'],
+					comment: rhash['comment'],
+					whitelist: rhash['whitelist']
+				}
 
+				begin
+					if key
+						Vault::Key.update(key.id, attrs)
+					else
+						Vault::Key.create(attrs).update_column(:id, rhash['id'])
 					end
-				else
-					begin
-						Vault::Key.update(
-						key.id,
-						project_id: rhash['project_id'],
-						name: rhash['name'],
-						body: decryptb,
-						login: rhash['login'],
-						type: rhash['type'],
-						file: rhash['file'],
-						url: rhash['url'],
-						comment: rhash['comment'],
-						whitelist: rhash['comment']
-						)
-					rescue
-
-					end
+				rescue => e
+					Rails.logger.warn("Vault::Key.import failed for '#{rhash['name']}': #{e.message}")
 				end
       end
     end

@@ -1,16 +1,18 @@
 ---
+# project 1
 key_tag_001:
   key_id: 1
-  tag_id: 1
-key_tag_002:
-  key_id: 2
-  tag_id: 2
-key_tag_003:
-  key_id: 2
-  tag_id: 3
+  tag_id: 1   # ssh  (proj 1)
 key_tag_004:
   key_id: 3
-  tag_id: 1
+  tag_id: 1   # ssh  (proj 1)
 key_tag_005:
   key_id: 3
-  tag_id: 3
+  tag_id: 3   # ftp  (proj 1)
+# project 2
+key_tag_002:
+  key_id: 2
+  tag_id: 2   # cisco (proj 2)
+key_tag_003:
+  key_id: 2
+  tag_id: 4   # ftp   (proj 2)
