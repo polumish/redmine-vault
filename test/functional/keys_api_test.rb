@@ -74,6 +74,24 @@ class KeysApiTest < Vault::ControllerTest
     assert_response :no_content
   end
 
+  def test_api_create_keyfile_stored_encrypted
+    Setting.plugin_vault = { 'encryption_key' => '0123456789abcdef' }
+    file = fixture_file_upload('../../plugins/vault/test/fixtures/keyfile.txt', 'text/plain')
+    post :create, params: {
+      project_id: 1, key: @token, format: 'json',
+      vault_key: { type: 'Vault::KeyFile', name: 'srv-key', file: file }
+    }
+    assert_response :created
+    assert_equal 'srv-key', JSON.parse(response.body)['name']
+
+    k = Vault::KeyFile.find_by(name: 'srv-key')
+    refute_nil k.file_data
+    content = File.read('plugins/vault/test/fixtures/keyfile.txt')
+    raw = Vault::KeyFile.connection.select_value("SELECT file_data FROM keys WHERE id = #{k.id}")
+    refute_equal content, raw, 'file must be encrypted at rest'
+    assert_equal content, k.decrypt_file
+  end
+
   def test_api_create_requires_permission
     Role.find(1).remove_permission!(:edit_keys)
     post :create, params: {

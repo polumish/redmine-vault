@@ -14,8 +14,24 @@ module Encryptor
   def self.engine
     s = Setting.plugin_vault
     return NullCipher if s['use_null_encryption']
-    return RedmineCipher if s['use_redmine_encryption'] 
+    return RedmineCipher if s['use_redmine_encryption']
     return VaultCipher
+  end
+
+  # Files must ALWAYS be encrypted at rest. If the configured engine performs no
+  # encryption (NullCipher), fall back to Redmine's built-in ciphering so file
+  # contents are never stored in plaintext.
+  def self.file_engine
+    e = engine
+    e == NullCipher ? RedmineCipher : e
+  end
+
+  def self.encrypt_file(data, options={})
+    (options[:engine] || file_engine).encrypt_text(data)
+  end
+
+  def self.decrypt_file(data, options={})
+    (options[:engine] || file_engine).decrypt_text(data)
   end
 
   def self.encrypt_all(model, attr, options={} )

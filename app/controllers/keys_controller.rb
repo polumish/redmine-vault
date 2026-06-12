@@ -83,11 +83,9 @@ class KeysController < ApplicationController
   end
 
   def create
-    save_file if key_params[:file]
     @key = Vault::Key.new(key_params)
-
     @key.project = @project
-
+    @key.upload = uploaded_file if @key.respond_to?(:upload=) && uploaded_file
     @key.tags = Vault::Tag.create_from_string(tags_param, @project)
 
     self.update_wishlist
@@ -104,15 +102,15 @@ class KeysController < ApplicationController
   end
 
   def update
-    save_file if key_params[:file]
+    @key.assign_attributes(key_params)
+    @key.upload = uploaded_file if @key.respond_to?(:upload=) && uploaded_file
+    self.update_wishlist
+
     respond_to do |format|
-
-      self.update_wishlist
-
-      if @key.update(key_params)
+      if @key.save
         @key.tags = Vault::Tag.create_from_string(tags_param, @project)
         format.html { redirect_to project_keys_path(@project), notice: t('notice.key.update.success') }
-        format.api  { render json: key_json(@key.reload.decrypt!), status: :ok }
+        format.api  { render json: key_json(@key), status: :ok }
       else
         format.html { render action: 'edit'}
         format.api  { render json: { errors: @key.errors.full_messages }, status: :unprocessable_entity }
@@ -192,7 +190,14 @@ class KeysController < ApplicationController
   end
 
   def key_params
-    params.require(:vault_key).permit(:type, :name, :body, :login, :file, :url, :comment).except(:tags)
+    params.require(:vault_key).permit(:type, :name, :body, :login, :url, :comment)
+  end
+
+  # The uploaded file (web form or multipart API) for a Vault::KeyFile, or nil.
+  # Stored encrypted in the DB by Vault::KeyFile#upload=, never on disk.
+  def uploaded_file
+    f = params.dig(:vault_key, :file)
+    f.respond_to?(:read) ? f : nil
   end
 
   # Tags may arrive as a comma-separated string (web form) or as an array (API).
@@ -221,12 +226,6 @@ class KeysController < ApplicationController
 
   def index_params
     params.permit('query')
-  end
-
-  def save_file
-    name = SecureRandom.uuid
-    File.open("#{Vault::KEYFILES_DIR}/#{name}", "wb") { |f| f.write(key_params[:file].read) }
-    params['vault_key']['file'] = name
   end
 
 end

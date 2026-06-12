@@ -63,6 +63,35 @@ DELETE /projects/<project>/keys/<id>.json
 
 → `204 No Content`.
 
+## Attach a file (Vault::KeyFile)
+
+For `type=Vault::KeyFile` send the request as **multipart/form-data** (not JSON)
+so the file rides along in `vault_key[file]`:
+
+```sh
+curl -sS -X POST "https://red.half.net.ua/projects/myproj/keys.json" \
+  -H "X-Redmine-API-Key: $RM_KEY" \
+  -F "vault_key[type]=Vault::KeyFile" \
+  -F "vault_key[name]=deploy-id_ed25519" \
+  -F "vault_key[login]=git" \
+  -F "vault_key[file]=@./id_ed25519"
+```
+
+→ `201` with `"file":"<original-filename>"`. The file contents are stored
+**encrypted in the database** (`keys.file_data`); nothing is written to disk.
+
+Download it back (needs `download_keys` permission):
+
+```sh
+curl -sS -o id_ed25519 \
+  "https://red.half.net.ua/projects/myproj/key_files/<id>/download?key=$RM_KEY"
+```
+
+Inline preview: `/projects/<proj>/key_files/<id>/preview`.
+
+> Files are always encrypted at rest. If the configured cipher is Null, file
+> encryption falls back to Redmine's built-in ciphering. See `docs/encryption.md`.
+
 ## Key object shape
 
 ```json

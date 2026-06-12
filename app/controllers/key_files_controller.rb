@@ -1,25 +1,23 @@
 class KeyFilesController < ApplicationController
   before_action :find_project_by_project_id
   before_action :authorize
+  accept_api_auth :download, :preview
 
   def download
     find_key
-    unless @key.nil?
-      send_file "#{Vault::KEYFILES_DIR}/#{@key.file}", filename: @key.name
-    end
+    return if @key.nil?
+    data = file_data
+    return render_404 if data.nil?
+    send_data data, filename: download_filename, disposition: 'attachment'
   end
 
   def preview
     find_key
-    unless @key.nil?
-      filepath = "#{Vault::KEYFILES_DIR}/#{@key.file}"
-      if File.exist?(filepath)
-        mime = Marcel::MimeType.for(Pathname.new(filepath))
-        send_file filepath, filename: @key.name, type: mime, disposition: "inline"
-      else
-        render_404
-      end
-    end
+    return if @key.nil?
+    data = file_data
+    return render_404 if data.nil?
+    mime = Marcel::MimeType.for(StringIO.new(data), name: download_filename)
+    send_data data, filename: download_filename, type: mime, disposition: 'inline'
   end
 
   private
@@ -30,5 +28,15 @@ class KeyFilesController < ApplicationController
       redirect_to project_keys_path(@project), alert: t("alert.key.not_found")
       @key = nil
     end
+  end
+
+  # Decrypted file bytes, or nil if this key has no attached file.
+  def file_data
+    return nil unless @key.is_a?(Vault::KeyFile)
+    @key.decrypt_file
+  end
+
+  def download_filename
+    (@key.file.presence || @key.name).to_s
   end
 end

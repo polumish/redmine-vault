@@ -29,6 +29,15 @@ toggle. It reuses Redmine's database cipher key from `configuration.yml` and is
 materially stronger than ECB. Re-encrypt existing rows after switching using the
 plugin's `Encryptor.encrypt_all` / `decrypt_all` helpers (back up first).
 
+## Key files
+
+Since 0.5.2, `Vault::KeyFile` contents are stored encrypted in the database
+column `keys.file_data` (never in plaintext on disk). File encryption is
+**mandatory**: `Encryptor.file_engine` uses the configured cipher, but if that is
+`NullCipher` it falls back to `RedmineCipher` so files are never stored in
+plaintext. (This still requires Redmine's `database_cipher_key` to be set in
+`config/configuration.yml` for the fallback to actually encrypt.)
+
 ## Future work (out of scope this round)
 
 Add an authenticated `AES-256-GCM` engine (random IV + auth tag) and a migration

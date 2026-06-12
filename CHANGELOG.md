@@ -1,3 +1,16 @@
+## Version: 0.5.2 (12.06.2026)
+### Security / Features
+- Key files (`Vault::KeyFile`) are now stored **encrypted in the database**
+  (`keys.file_data`), not in plaintext on disk. Files are always encrypted: if
+  the configured cipher is Null, encryption falls back to Redmine's built-in
+  ciphering (`Encryptor.file_engine`).
+- Download/preview now serve the decrypted bytes from the DB and accept a Redmine
+  API key (`accept_api_auth`). Migration 011 moves any existing on-disk files into
+  the encrypted column; disk copies are removed on deploy (backed up first).
+### Bugfixes
+- `Vault::Password#encrypt!` is dirty-guarded so a partial API update that omits
+  `body` no longer double-encrypts it.
+
 ## Version: 0.5.1 (12.06.2026)
 ### Bugfixes
 - Fixed HTTP 500 when adding tags — `Vault::Tag.create_from_string` is now
