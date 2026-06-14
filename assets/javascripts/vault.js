@@ -23,6 +23,22 @@ function vaultOpenModal(url) {
   document.getElementById("vault-modal-overlay").style.display = "flex";
 }
 
+// Copy text to the clipboard, with a fallback for non-secure contexts (http).
+function vaultCopyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text);
+  }
+  var ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;";
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand("copy"); } catch (e) {}
+  document.body.removeChild(ta);
+  return Promise.resolve();
+}
+
 $(document).ready(function() {
   if (!document.getElementById("vault-modal-overlay")) {
     // Overlay - covers full screen, flex center
@@ -65,5 +81,26 @@ $(document).ready(function() {
 
   $(document).on("keydown", function(e) {
     if (e.key === "Escape" || e.keyCode === 27) vaultCloseModal();
+  });
+
+  // Copy a key field (password / login / url) to the clipboard.
+  // Each trigger's data-clipboard-target is the id of the element holding the value,
+  // so the Password icon copies the password, the URL icon the URL, etc.
+  // Self-contained on purpose: Redmine 6.x core only wires data-clipboard-text (a literal),
+  // not data-clipboard-target, so without this the icons copy the wrong field (or nothing).
+  $(document).on("click", "#keys_table [data-clipboard-target]", function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var el = document.getElementById($(this).attr("data-clipboard-target"));
+    if (!el) { return; }
+    var text = (typeof el.value === "string" && el.value !== "") ? el.value : el.textContent;
+    var icon = $(this).find("i.fa").first();
+    var prev = icon.attr("class");
+    vaultCopyText(text).then(function() {
+      if (prev) {
+        icon.attr("class", "fa fa-check fa-fw");
+        setTimeout(function() { icon.attr("class", prev); }, 1200);
+      }
+    });
   });
 });
