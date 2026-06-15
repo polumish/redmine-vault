@@ -104,3 +104,14 @@ $(document).ready(function() {
     });
   });
 });
+
+// "+ add file" on the key form: clone an empty file+comment row.
+jQuery(document).on("click", "#vault-add-attachment", function(e) {
+  e.preventDefault();
+  var container = document.getElementById("vault-new-attachments");
+  var first = container && container.querySelector(".vault-new-attachment");
+  if (!first) { return; }
+  var clone = first.cloneNode(true);
+  jQuery(clone).find("input").val("");
+  container.appendChild(clone);
+});

@@ -92,6 +92,7 @@ class KeysController < ApplicationController
 
     respond_to do |format|
       if @key.save
+        process_attachments(@key)
         format.html { redirect_to project_keys_path(@project), notice: t('notice.key.create.success') }
         format.api  { render json: key_json(@key), status: :created, location: project_key_url(@project, @key) }
       else
@@ -109,6 +110,7 @@ class KeysController < ApplicationController
     respond_to do |format|
       if @key.save
         @key.tags = Vault::Tag.create_from_string(tags_param, @project)
+        process_attachments(@key)
         format.html { redirect_to project_keys_path(@project), notice: t('notice.key.update.success') }
         format.api  { render json: key_json(@key), status: :ok }
       else
@@ -198,6 +200,28 @@ class KeysController < ApplicationController
   def uploaded_file
     f = params.dig(:vault_key, :file)
     f.respond_to?(:read) ? f : nil
+  end
+
+  # Web form: add new attached files, update comments of existing ones, delete marked.
+  # Multiple files (each with a comment), on any key type.
+  def process_attachments(key)
+    return unless User.current.allowed_to?(:edit_keys, key.project)
+
+    Array(params[:attachment_remove]).each do |id|
+      key.vault_attachments.where(id: id).destroy_all
+    end
+    (params[:attachment_comments] || {}).each do |id, comment|
+      key.vault_attachments.find_by(id: id)&.update(comment: comment)
+    end
+
+    files    = Array(params[:new_files])
+    comments = Array(params[:new_comments])
+    files.each_with_index do |f, i|
+      next unless f.respond_to?(:read) && f.size.to_i > 0
+      att = key.vault_attachments.build(comment: comments[i])
+      att.upload = f
+      att.save
+    end
   end
 
   # Tags may arrive as a comma-separated string (web form) or as an array (API).

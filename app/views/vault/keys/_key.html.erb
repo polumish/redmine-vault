@@ -10,3 +10,15 @@
     <td><label id='plain_pass'><%= key.body %></label></td>
   </tr>
 </table>
+
+<% if key.vault_attachments.any? %>
+  <table>
+    <tr><td colspan='2'><strong><%= t('key.attr.attachments') %></strong></td></tr>
+    <% key.vault_attachments.order(:id).each do |att| %>
+      <tr>
+        <td><%= link_to (att.filename.presence || "file ##{att.id}"), project_download_key_attachment_path(key.project, att), class: 'icon icon-file' %></td>
+        <td><%= att.comment %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>

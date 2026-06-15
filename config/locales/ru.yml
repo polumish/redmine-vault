@@ -51,12 +51,18 @@ ru:
       type: "Тип"
       tags: "Теги"
       file: "Файл ключа"
+      attachments: "Прикреплённые файлы"
       comment: "Комментарий"
       whitelist: "Список доступа"
 
     whitelist:
       selected_members: "Выбранные участники"
       available_members: "Доступные участники"
+
+    attachment:
+      add: "Добавить файл"
+      comment: "Комментарий"
+      delete: "Удалить"
 
   context_menu:
       copy_key: "Copy Key"

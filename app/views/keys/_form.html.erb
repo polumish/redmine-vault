@@ -34,12 +34,31 @@
     <p><%= f.label :tags, t('key.attr.tags') %>
     <%= f.text_field :tags, value: Vault::Tag.tags_to_string(key.tags), class: 'autocomplete' %></p>
 
-    <p><%= f.label :file, t('key.attr.file') %>
-    <% if User.current.allowed_to?(:edit_keys, @project) %>
-      <%= f.file_field :file %></p>
-    <% else %>
-      <%= f.file_field :file,:readonly => true %></p>
-    <% end %>
+    <div class="vault-attachments">
+      <p><label><%= t('key.attr.attachments') %></label></p>
+      <% if key.persisted? %>
+        <% key.vault_attachments.order(:id).each do |att| %>
+          <div class="vault-attachment-row">
+            <%= link_to (att.filename.presence || "file ##{att.id}"), project_download_key_attachment_path(@project, att), class: 'icon icon-file' %>
+            <% if User.current.allowed_to?(:edit_keys, @project) %>
+              <%= text_field_tag "attachment_comments[#{att.id}]", att.comment, placeholder: t('key.attachment.comment'), class: 'vault-attachment-comment' %>
+              <label class="vault-attachment-del"><%= check_box_tag 'attachment_remove[]', att.id %> <%= t('key.attachment.delete') %></label>
+            <% elsif att.comment.present? %>
+              <span class="vault-attachment-comment-ro"><%= att.comment %></span>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+      <% if User.current.allowed_to?(:edit_keys, @project) %>
+        <div id="vault-new-attachments">
+          <div class="vault-new-attachment">
+            <%= file_field_tag 'new_files[]' %>
+            <%= text_field_tag 'new_comments[]', nil, placeholder: t('key.attachment.comment'), class: 'vault-attachment-comment' %>
+          </div>
+        </div>
+        <p><a href="#" id="vault-add-attachment" class="icon icon-add">+ <%= t('key.attachment.add') %></a></p>
+      <% end %>
+    </div>
 
     <p><%= f.label :comment, t('key.attr.comment') %>
     <% if User.current.allowed_to?(:edit_keys, @project) %>

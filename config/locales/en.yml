@@ -51,12 +51,18 @@ en:
       type: "Type"
       tags: "Tags"
       file: "Password File"
+      attachments: "Attached files"
       comment: "Comment"
       whitelist: "Access list"
 
     whitelist:
       selected_members: "Selected Members"
       available_members: "Available Members"
+
+    attachment:
+      add: "Add file"
+      comment: "Comment"
+      delete: "Delete"
 
   context_menu:
     copy_key: "Copy Password"

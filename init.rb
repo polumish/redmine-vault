@@ -25,13 +25,13 @@ Redmine::Plugin.register :vault do
   name 'Vault plugin (fork)'
   author 'noshutdown.ru'
   description 'Plugin for keep keys and passwords. Fork of noshutdown.ru/redmine-plugins-vault'
-  version '0.5.3'
+  version '0.6.0'
   url 'https://git.half.net.ua/polumish/redmine-vault'
   author_url 'https://noshutdown.ru/'
 
   project_module :keys do
     permission :export_keys, keys: [ :keys_to_pdf ]
-    permission :download_keys, key_files: [ :download, :preview ]
+    permission :download_keys, key_files: [ :download, :preview ], key_attachments: [ :download, :preview ]
     permission :view_keys, keys: [ :index, :edit, :show, :context_menu ]
     permission :edit_keys, keys: [ :index, :new, :create, :edit, :show, :update, :destroy, :copy ]
     permission :manage_whitelist_keys, keys: [ :index, :create, :edit, :show, :update, :copy ]
