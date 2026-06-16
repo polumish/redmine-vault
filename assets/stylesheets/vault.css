@@ -40,6 +40,14 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 }
 #vault_whitelist td.buttons { text-align: center; vertical-align: middle; padding: 0 10px; }
 
+/* ---- compact edit form: tighter vertical rhythm so it fits on one screen ---- */
+.edit_vault_key .box.tabular p, .new_vault_key .box.tabular p { margin: 5px 0; }
+.edit_vault_key .box label, .new_vault_key .box label { padding-top: .3em; }
+.edit_vault_key .box input[type='text'], .new_vault_key .box input[type='text'] { height: 26px; }
+.edit_vault_key textarea.wiki-edit, .new_vault_key textarea.wiki-edit { min-height: 56px; height: 56px; }
+.edit_vault_key .vault-attachments, .new_vault_key .vault-attachments { margin: 4px 0; }
+#vault_whitelist { margin-top: 6px; }
+
 /* ---- list toolbar ---- */
 .vault-toolbar { margin: 0 0 8px 0; }
 .vault-toolbar .vault-search { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
