@@ -1,4 +1,7 @@
-<td> <%= link_to key.name, edit_project_key_path(@project, key), class: 'keys-links' %></td>
+<td>
+  <%= link_to key.name, edit_project_key_path(@project, key), class: 'keys-links' %>
+  <span class="vault-id">#<%= key.id %></span>
+</td>
 <td>
   <% unless key.url.blank? %>
     <% if /:\/\//.match(key.url) %>
