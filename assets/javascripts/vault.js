@@ -275,8 +275,23 @@ function vaultCloseCard() {
   if (ov) { ov.parentNode.removeChild(ov); }
 }
 
-function vaultOpenCard(url, title) {
+// Place the box near the click point (x,y in viewport coords): prefer just above
+// the click, fall back to below, then vertically centered; always clamped on-screen.
+function vaultPositionCard(box, x, y) {
+  var bw = box.offsetWidth, bh = box.offsetHeight;
+  var vw = window.innerWidth, vh = window.innerHeight, m = 8;
+  var left = Math.min(Math.max(m, x - 24), vw - bw - m);
+  var top;
+  if (y - bh - 12 >= m)           { top = y - bh - 12; }            // above the click
+  else if (y + 18 + bh <= vh - m) { top = y + 18; }                // else below it
+  else                            { top = Math.max(m, (vh - bh) / 2); } // else center
+  box.style.left = left + "px";
+  box.style.top = top + "px";
+}
+
+function vaultOpenCard(url, title, x, y) {
   vaultCloseCard();
+  if (typeof x !== "number") { x = window.innerWidth / 2; y = window.innerHeight / 2; }
   var ov = document.createElement("div");
   ov.id = "vault-card-overlay";
   ov.className = "vault-card-overlay";
@@ -291,19 +306,23 @@ function vaultOpenCard(url, title) {
     "<div class='vault-card-mbody'>" + vaultI18n("loading", "Loading…") + "</div>";
   ov.appendChild(box);
   document.body.appendChild(ov);
+  vaultPositionCard(box, x, y);
 
   jQuery.ajax({ url: url, dataType: "html" })
-    .done(function(html) { box.querySelector(".vault-card-mbody").innerHTML = html; })
+    .done(function(html) {
+      box.querySelector(".vault-card-mbody").innerHTML = html;
+      vaultPositionCard(box, x, y); // re-anchor after content grows the box
+    })
     .fail(function() { window.location = url.replace(/\/card(\?.*)?$/, ""); });
 }
 
-// Click a {{pass}} link → open the card modal instead of navigating.
+// Click a {{pass}} link → open the card modal at the click point instead of navigating.
 // data-card-url absent (older render / no JS) → default navigation kept.
 jQuery(document).on("click", ".vault-pass-link", function(e) {
   var url = jQuery(this).data("card-url");
   if (!url) { return; }
   e.preventDefault();
-  vaultOpenCard(url, jQuery(this).text());
+  vaultOpenCard(url, jQuery(this).text(), e.clientX, e.clientY);
 });
 
 jQuery(document).on("keydown", function(e) {

@@ -1,3 +1,11 @@
+## Version: 0.8.2 (16.06.2026)
+### UI
+- `{{pass}}` card modal polish: the modal now opens **at the click point** (just above
+  the cursor, clamped on-screen, re-anchored after the card loads) instead of screen
+  centre — fewer mouse moves. The close **×** moved **inside** the box (no longer
+  clipped by the box overflow) and highlights red on hover. The backdrop is darker
+  (0.78) to better separate the card from the page.
+
 ## Version: 0.8.1 (16.06.2026)
 ### Features
 - The `{{pass(ID)}}` link now opens the password **card in a modal overlay** on the

@@ -133,20 +133,20 @@ button.vault-jst-pass:hover { color: #c61a1a; }
 
 /* {{pass}} card modal */
 .vault-card-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-  z-index: 10000; display: flex; justify-content: center;
-  align-items: flex-start; padding-top: 8vh;
+  position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 10000;
 }
 .vault-card-modal {
-  position: relative; background: #fff; border-radius: 8px;
-  padding: 16px 20px; min-width: 340px; max-width: 90vw;
-  max-height: 80vh; overflow: auto; box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  position: absolute; background: #fff; border-radius: 8px;
+  padding: 14px 18px; width: 460px; max-width: 92vw; max-height: 80vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.6);
 }
 .vault-card-modal .vault-card { box-shadow: none; border: none; padding: 0; }
 .vault-card-close {
-  position: absolute; top: -12px; right: -12px; width: 28px; height: 28px;
-  line-height: 28px; text-align: center; font-weight: bold; color: #fff;
-  background: #e74c3c; border-radius: 50%; cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  position: absolute; top: 6px; right: 8px; width: 24px; height: 24px;
+  line-height: 22px; text-align: center; font-size: 15px; color: #999;
+  cursor: pointer; border-radius: 4px;
 }
-.vault-card-mtitle { margin: 0 0 10px; }
+.vault-card-close:hover { color: #fff; background: #e74c3c; }
+.vault-card-mtitle { margin: 0 26px 10px 0; }
+.vault-card-mbody { overflow: auto; }
