@@ -10,6 +10,7 @@ require File.expand_path('vendor/vault_cipher', __dir__)
 require File.expand_path('vendor/redmine_cipher', __dir__)
 require File.expand_path('vendor/encryptor', __dir__)
 require File.expand_path('vendor/file_cipher', __dir__)
+require File.expand_path('vendor/body_cipher', __dir__)
 
 # Project association
 require File.expand_path('vendor/project_patch', __dir__)
@@ -35,7 +36,7 @@ Redmine::Plugin.register :vault do
   name 'Vault plugin (fork)'
   author 'noshutdown.ru'
   description 'Plugin for keep keys and passwords. Fork of noshutdown.ru/redmine-plugins-vault'
-  version '0.7.0'
+  version '0.8.0'
   url 'https://git.half.net.ua/polumish/redmine-vault'
   author_url 'https://noshutdown.ru/'
 
