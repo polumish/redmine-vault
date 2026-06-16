@@ -1,3 +1,17 @@
+## Version: 0.8.0 (16.06.2026)
+### Security
+- Password bodies are now encrypted with authenticated **AES-256-GCM** (`BodyCipher`,
+  key derived from Redmine's `secret_key_base` — on disk, not in the DB dump), replacing
+  the weak configurable cipher (AES-128-ECB, often effectively plaintext when no key was
+  set). Stored values carry a version marker (`vgcm1:`).
+- Migration 013 re-encrypts all existing bodies (idempotent, per-row resilient) and widens
+  `keys.body` to `text` first (GCM ciphertext is ~33% + 34 bytes larger than the plaintext,
+  so it overflowed the old `varchar(255)`). Migration 014 repairs hosts that ran an earlier
+  013 by widening + finishing any rows skipped due to the overflow.
+- Reads fall back to the legacy cipher for any not-yet-migrated value, so nothing 500s during
+  the transition. The legacy cipher and its settings are retained for that fallback and for
+  rollback (`down`).
+
 ## Version: 0.7.0 (16.06.2026)
 ### Features
 - Wiki macro `{{pass(ID)}}` (and `{{pass(ID, "label")}}`) links to a password from
