@@ -27,3 +27,48 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 #vault_whitelist select {
 	min-width: 250px;
 }
+
+/* ---- list toolbar ---- */
+.vault-toolbar { margin: 0 0 8px 0; }
+.vault-toolbar .vault-search { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.vault-toolbar .vault-search-scope label { margin-right: 8px; font-weight: normal; white-space: nowrap; }
+.vault-toolbar .vault-clear { margin-left: 4px; }
+.vault-id { color: #999; font-size: 85%; font-weight: normal; }
+
+/* ---- detail card ---- */
+.vault-card .attributes { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; }
+.vault-card .attribute { display: contents; }
+.vault-card .attribute .label { font-weight: bold; color: #555; padding-top: 2px; }
+.vault-card .attribute .value { word-break: break-word; }
+.vault-card .vault-pass-value label { font-family: monospace; }
+.vault-tag-chip { display: inline-block; background: #eef; border: 1px solid #ccd; border-radius: 10px;
+  padding: 0 8px; margin: 0 4px 4px 0; font-size: 85%; text-decoration: none; }
+.vault-card-files, .vault-card-comment { margin-top: 12px; }
+.vault-card-files ul { list-style: none; margin: 4px 0; padding: 0; }
+.vault-card-files li { margin: 2px 0; }
+.vault-att-comment { color: #777; }
+.vault-pass-noaccess, .vault-pass-notfound { color: #999; }
+
+/* ---- edit-form attachments: align under input column, keep Delete inside the box ---- */
+.edit_vault_key .vault-attachments, .new_vault_key .vault-attachments { clear: left; padding-left: 180px; margin: 6px 0; }
+.edit_vault_key .vault-attachments .vault-attachments-label, .new_vault_key .vault-attachments .vault-attachments-label { float: left; margin-left: -180px; width: 175px;
+  font-weight: bold; padding-top: .45em; }
+.vault-attachment-row, .vault-new-attachment { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 3px 0; }
+.vault-attachment-del { white-space: nowrap; margin-left: 4px; }
+#vault-add-attachment { display: inline-block; margin-top: 4px; }
+
+/* ---- editor toolbar button ---- */
+button.vault-jst-pass { background: transparent; border: none; cursor: pointer; padding: 2px 5px; color: #555; }
+button.vault-jst-pass:hover { color: #c61a1a; }
+
+/* ---- picker modal ---- */
+#vault-picker-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); z-index: 10000; display: flex; justify-content: center; align-items: flex-start; }
+.vault-picker-box { background: #fff; border-radius: 8px; margin-top: 10vh; padding: 14px; width: 420px;
+  max-width: 90vw; box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
+.vault-picker-title { font-weight: bold; margin-bottom: 8px; }
+.vault-picker-search { width: 100%; box-sizing: border-box; padding: .3em .4em; margin-bottom: 8px; }
+.vault-picker-list { max-height: 50vh; overflow-y: auto; }
+.vault-picker-item { display: block; padding: 5px 6px; text-decoration: none; color: #333; border-radius: 4px; }
+.vault-picker-item:hover { background: #eef; }
+.vault-picker-empty { color: #999; padding: 8px; }

@@ -40,6 +40,9 @@ en:
       new: "New Password"
       actions: "Actions"
       clipboard: "Copy to Clipboard"
+      copy_link: "Copy link macro"
+      show: "Show"
+      hide: "Hide"
 
     attr:
       lock: "Lock"
@@ -54,10 +57,23 @@ en:
       attachments: "Attached files"
       comment: "Comment"
       whitelist: "Access list"
+      id: "ID"
 
     whitelist:
       selected_members: "Selected Members"
       available_members: "Available Members"
+
+    macro:
+      no_access: "(no access)"
+      not_found: "(not found)"
+
+    toolbar:
+      insert_pass: "Insert password link"
+
+    picker:
+      title: "Insert password link"
+      search: "Search…"
+      empty: "No passwords available"
 
     attachment:
       add: "Add file"

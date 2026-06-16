@@ -40,6 +40,9 @@ ru:
       new: "Добавить ключ"
       actions: "Действия"
       clipboard: "Копировать в буфер"
+      copy_link: "Скопировать макрос-ссылку"
+      show: "Показать"
+      hide: "Скрыть"
 
     attr:
       lock: "Замок"
@@ -54,10 +57,23 @@ ru:
       attachments: "Прикреплённые файлы"
       comment: "Комментарий"
       whitelist: "Список доступа"
+      id: "ID"
 
     whitelist:
       selected_members: "Выбранные участники"
       available_members: "Доступные участники"
+
+    macro:
+      no_access: "(нет доступа)"
+      not_found: "(не найдено)"
+
+    toolbar:
+      insert_pass: "Вставить ссылку на пароль"
+
+    picker:
+      title: "Вставить ссылку на пароль"
+      search: "Поиск…"
+      empty: "Нет доступных паролей"
 
     attachment:
       add: "Добавить файл"

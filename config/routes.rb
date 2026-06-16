@@ -1,5 +1,6 @@
 resources :projects do
   match '/keys/context_menu', to: 'keys#context_menu', as: 'keys_context_menus', via: [:get, :post]
+  get '/keys/picker', to: 'keys#picker', as: 'keys_picker'
   resources :keys
   get '/key_files/:id/download', to: 'key_files#download', as: 'download_key_file'
   get '/key_files/:id/preview', to: 'key_files#preview', as: 'preview_key_file'

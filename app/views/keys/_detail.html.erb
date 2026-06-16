@@ -1,0 +1,58 @@
+<div class="box vault-card">
+  <div class="attributes">
+    <div class="attribute">
+      <div class="label"><%= t('key.attr.login') %></div>
+      <div class="value"><%= key.login.presence || '—' %></div>
+    </div>
+    <div class="attribute">
+      <div class="label"><%= t('key.attr.url') %></div>
+      <div class="value">
+        <% if key.url.present? && key.url =~ /:\/\// %>
+          <%= link_to key.url, key.url %>
+        <% else %>
+          <%= key.url.presence || '—' %>
+        <% end %>
+      </div>
+    </div>
+    <% unless key.is_a?(Vault::KeyFile) %>
+      <div class="attribute">
+        <div class="label"><%= t('key.attr.body') %></div>
+        <div class="value vault-pass-value">
+          <% if key.body.present? %>
+            <label>*********</label>
+            <label id="plain_pass_show_<%= key.id %>" style="display:none;"><%= key.body.to_s.force_encoding('UTF-8') %></label>
+            <a href="#" class="keys-actions vault-reveal" data-target="plain_pass_show_<%= key.id %>" title="<%= t('key.btn.show') %>"><i class="fa fa-eye fa-fw"></i></a>
+            <a href="#" class="keys-actions" data-clipboard-target="plain_pass_show_<%= key.id %>" title="<%= t('key.btn.clipboard') %>"><i class="fa fa-clipboard fa-fw"></i></a>
+          <% else %>—<% end %>
+        </div>
+      </div>
+    <% end %>
+    <div class="attribute">
+      <div class="label"><%= t('key.attr.tags') %></div>
+      <div class="value vault-tags">
+        <% key.tags.each do |tag| %><%= link_to "##{tag.name}", project_keys_path(key.project, query: "##{tag.name}"), class: 'vault-tag-chip' %><% end %>
+      </div>
+    </div>
+  </div>
+
+  <% if key.vault_attachments.any? %>
+    <div class="vault-card-files">
+      <h3><%= t('key.attr.attachments') %></h3>
+      <ul>
+        <% key.vault_attachments.order(:id).each do |att| %>
+          <li>
+            <%= link_to (att.filename.presence || "file ##{att.id}"), project_download_key_attachment_path(key.project, att), class: 'icon icon-file' %>
+            <% if att.comment.present? %><span class="vault-att-comment">— <%= att.comment %></span><% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if key.comment.present? %>
+    <div class="vault-card-comment">
+      <h3><%= t('key.attr.comment') %></h3>
+      <%= textilizable key.comment %>
+    </div>
+  <% end %>
+</div>
