@@ -4,8 +4,18 @@
   <%= javascript_include_tag 'vault', :plugin => 'vault' %>
 <% end %>
 
-<h1> <%= t('key.title.show') %> </h1>
+<div class="contextual">
+  <% if User.current.allowed_to?(:edit_keys, @project) %>
+    <%= link_to t('key.title.edit'), edit_project_key_path(@project, @key), class: 'icon icon-edit' %>
+    <%= link_to t('key.title.copy'), project_copy_key_path(@project, @key), class: 'icon icon-copy' %>
+    <%= link_to t('key.title.delete'), project_key_path(@project, @key), method: :delete,
+          data: { confirm: t('confirm.key.delete') }, class: 'icon icon-del' %>
+  <% end %>
+  <a href="#" class="icon icon-link vault-copy-link" data-key-id="<%= @key.id %>"><%= t('key.btn.copy_link') %></a>
+</div>
 
-<%= render @key %>
+<h2><%= @key.name %> <span class="vault-id">#<%= @key.id %></span></h2>
 
-<%= link_to 'Back', project_keys_path(@project) %>
+<%= render partial: 'keys/detail', locals: { key: @key } %>
+
+<p><%= link_to t('button_back'), project_keys_path(@project) %></p>
