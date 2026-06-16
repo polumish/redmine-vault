@@ -8,7 +8,7 @@
       <div class="label"><%= t('key.attr.url') %></div>
       <div class="value">
         <% if key.url.present? && key.url =~ /:\/\// %>
-          <%= link_to key.url, key.url %>
+          <%= link_to key.url, key.url, target: '_blank', rel: 'noopener' %>
         <% else %>
           <%= key.url.presence || '—' %>
         <% end %>

@@ -316,13 +316,25 @@ function vaultOpenCard(url, title, x, y) {
     .fail(function() { window.location = url.replace(/\/card(\?.*)?$/, ""); });
 }
 
-// Click a {{pass}} link → open the card modal at the click point instead of navigating.
-// data-card-url absent (older render / no JS) → default navigation kept.
+// Click a {{pass}} link (macro, or the name/eye on the passwords list) → open the
+// card modal at the click point instead of navigating. data-card-url absent
+// (older render / no JS) → default navigation kept.
 jQuery(document).on("click", ".vault-pass-link", function(e) {
   var url = jQuery(this).data("card-url");
   if (!url) { return; }
   e.preventDefault();
-  vaultOpenCard(url, jQuery(this).text(), e.clientX, e.clientY);
+  e.stopPropagation();
+  var title = jQuery(this).data("card-title") || jQuery(this).text();
+  vaultOpenCard(url, title, e.clientX, e.clientY);
+});
+
+// Click anywhere on a passwords-list row (except an actual control: a link, button,
+// input, or a copy/clipboard trigger) → open the card modal too.
+jQuery(document).on("click", "#keys_table tr.vault-row", function(e) {
+  if (jQuery(e.target).closest("a, button, input, label, [data-clipboard-target]").length) { return; }
+  var url = jQuery(this).data("card-url");
+  if (!url) { return; }
+  vaultOpenCard(url, jQuery(this).data("card-title"), e.clientX, e.clientY);
 });
 
 jQuery(document).on("keydown", function(e) {

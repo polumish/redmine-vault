@@ -1,4 +1,6 @@
-<%= link_to project_key_path(@project, key), class: 'keys-actions', title: t('key.title.show') do %>
+<%= link_to project_key_path(@project, key), class: 'keys-actions vault-pass-link',
+      data: { card_url: url_for(controller: 'keys', action: 'card', project_id: @project, id: key, only_path: true),
+              card_title: key.name }, title: t('key.title.show') do %>
   <i class='fa fa-eye fa-fw'></i>
 <% end %>
 

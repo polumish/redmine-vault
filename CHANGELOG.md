@@ -1,3 +1,13 @@
+## Version: 0.8.3 (16.06.2026)
+### UI
+- Passwords **list**: clicking a password row (or its name / eye icon) now opens the
+  password **card in a modal** instead of navigating to the full card page — same
+  behaviour as the `{{pass}}` macro on issues/wiki. Real controls in the row (url
+  link, login/password copy, edit/clone/delete/copy-link, checkbox) keep their own
+  action. The full card page stays reachable as a no-JS fallback.
+- Stored **URLs** (the key's `url`, on the card and the list) now open in a **new tab**
+  (`target=_blank`, `rel=noopener`).
+
 ## Version: 0.8.2 (16.06.2026)
 ### UI
 - `{{pass}}` card modal polish: the modal now opens **at the click point** (just above
