@@ -14,6 +14,7 @@ require File.expand_path('vendor/file_cipher', __dir__)
 # Project association
 require File.expand_path('vendor/project_patch', __dir__)
 require File.expand_path('lib/vault/password_link', __dir__)
+require File.expand_path('lib/vault/macros', __dir__)
 
 # Hook for stylesheet
 class VaultViewHook < Redmine::Hook::ViewListener
