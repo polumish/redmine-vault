@@ -19,7 +19,16 @@ require File.expand_path('lib/vault/macros', __dir__)
 # Hook for stylesheet
 class VaultViewHook < Redmine::Hook::ViewListener
   def view_layouts_base_html_head(context = {})
-    stylesheet_link_tag('vault', plugin: 'vault') + javascript_include_tag('vault', plugin: 'vault')
+    i18n = {
+      insert_pass:   l('key.toolbar.insert_pass'),
+      picker_title:  l('key.picker.title'),
+      picker_search: l('key.picker.search'),
+      picker_empty:  l('key.picker.empty'),
+      copied:        l('key.btn.clipboard')
+    }
+    stylesheet_link_tag('vault', plugin: 'vault') +
+      javascript_include_tag('vault', plugin: 'vault') +
+      javascript_tag("window.VAULT_I18N = #{i18n.to_json};")
   end
 end
 
