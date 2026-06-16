@@ -73,9 +73,9 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
   border: 1px solid #d6d9de; border-radius: 6px; background: #f6f7f9;
   padding: 5px; max-height: 200px; overflow-y: auto;
 }
-.vault-acl-item { display: block; padding: 4px 8px; border-radius: 4px; font-weight: normal; cursor: pointer; }
-.vault-acl-item:hover { background: #e9eef5; }
-.vault-acl-item input { margin-right: 8px; vertical-align: middle; }
+#vault_whitelist .vault-acl-item { display: block; float: none; margin: 0; width: auto; padding: 4px 8px; border-radius: 4px; font-weight: normal; cursor: pointer; }
+#vault_whitelist .vault-acl-item:hover { background: #e9eef5; }
+#vault_whitelist .vault-acl-item input { float: none; margin: 0 8px 0 0; width: auto; vertical-align: middle; }
 
 /* ---- list toolbar ---- */
 .vault-toolbar { margin: 0 0 8px 0; }
