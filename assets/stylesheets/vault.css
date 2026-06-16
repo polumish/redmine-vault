@@ -48,6 +48,25 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 .edit_vault_key .vault-attachments, .new_vault_key .vault-attachments { margin: 4px 0; }
 #vault_whitelist { margin-top: 6px; }
 
+/* ---- two-column edit form ---- */
+.vault-form-cols { display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap; }
+.vault-form-col { min-width: 0; }
+.vault-form-col-main { flex: 2 1 300px; }
+.vault-form-col-aside { flex: 3 1 360px; }
+/* narrower label gutter inside columns so fields get room */
+.edit_vault_key .vault-form-col p, .new_vault_key .vault-form-col p { padding-left: 95px; }
+.edit_vault_key .vault-form-col p label, .new_vault_key .vault-form-col p label { margin-left: -95px; width: 90px; }
+.edit_vault_key .vault-form-col input[type='text'], .new_vault_key .vault-form-col input[type='text'],
+.edit_vault_key .vault-form-col select, .new_vault_key .vault-form-col select,
+.edit_vault_key .vault-form-col textarea, .new_vault_key .vault-form-col textarea { width: 100%; max-width: 100%; box-sizing: border-box; }
+/* attachments block inside a column: match the narrower gutter */
+.edit_vault_key .vault-form-col .vault-attachments, .new_vault_key .vault-form-col .vault-attachments { padding-left: 95px; }
+.edit_vault_key .vault-form-col .vault-attachments .vault-attachments-label,
+.new_vault_key .vault-form-col .vault-attachments .vault-attachments-label { margin-left: -95px; width: 90px; }
+/* access list fits the column: full-width table, two slim selects */
+.vault-form-col #vault_whitelist table.whitelist_users { width: 100%; padding-left: 0; }
+.vault-form-col #vault_whitelist select { width: 46%; min-width: 0; }
+
 /* ---- list toolbar ---- */
 .vault-toolbar { margin: 0 0 8px 0; }
 .vault-toolbar .vault-search { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }

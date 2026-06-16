@@ -1,5 +1,7 @@
 <%= form_for key, url: { controller: :keys, action: action }, html: { multipart: true } do |f| %>
   <div class='box tabular'>
+   <div class="vault-form-cols">
+    <div class="vault-form-col vault-form-col-main">
     <p><%= f.label :name, t('key.attr.name') %>
     <% if User.current.allowed_to?(:edit_keys, @project) %>
       <%= f.text_field :name %></p>
@@ -59,7 +61,9 @@
         <p><a href="#" id="vault-add-attachment" class="icon icon-add">+ <%= t('key.attachment.add') %></a></p>
       <% end %>
     </div>
+    </div>
 
+    <div class="vault-form-col vault-form-col-aside">
     <p><%= f.label :comment, t('key.attr.comment') %>
     <% if User.current.allowed_to?(:edit_keys, @project) %>
       <%= f.text_area :comment, class: 'wiki-edit' %></p>
@@ -105,6 +109,8 @@
 
       </div>
     <% end %>
+    </div>
+   </div>
   </div>
 
   <% if User.current.allowed_to?(:edit_keys, @project) %>
