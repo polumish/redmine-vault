@@ -14,7 +14,6 @@ require File.expand_path('vendor/file_cipher', __dir__)
 # Project association
 require File.expand_path('vendor/project_patch', __dir__)
 require File.expand_path('lib/vault/password_link', __dir__)
-require File.expand_path('lib/vault/macros', __dir__)
 
 # Hook for stylesheet
 class VaultViewHook < Redmine::Hook::ViewListener
@@ -52,4 +51,29 @@ Redmine::Plugin.register :vault do
   menu :project_menu, :keys, { controller: 'keys', action: 'index' }, caption: Proc.new {I18n.t('label_module')}, after: :activity, param: :project_id
   settings default: { 'empty' => true }, partial: 'settings/vault_settings'
   menu :admin_menu, :vault, { controller: 'vault_settings', action: 'index' }, caption: :label_vault, html: { class: 'icon' }
+end
+
+# Wiki macro {{pass(id)}} — registered here (NOT in lib/vault/, which Zeitwerk
+# autoloads and would require a matching Vault::Macros constant). References
+# Vault::PasswordLink (loaded above) only at macro-call time.
+Redmine::WikiFormatting::Macros.register do
+  desc "Link to a Vault password.\n\n{{pass(42)}}\n{{pass(42, \"custom label\")}}"
+  macro :pass do |obj, args|
+    id = args[0].to_s.strip
+    label = args[1].to_s.strip.gsub(/\A["']|["']\z/, '').presence
+    res = Vault::PasswordLink.resolve(id)
+    lock = content_tag(:i, ''.html_safe, class: 'fa fa-lock fa-fw')
+    case res[:state]
+    when :ok
+      key = res[:key]
+      lock + link_to(label || key.name,
+                     url_for(controller: 'keys', action: 'show',
+                             project_id: key.project, id: key.id, only_path: true),
+                     class: 'vault-pass-link')
+    when :no_access
+      content_tag(:span, lock + ' '.html_safe + l('key.macro.no_access'), class: 'vault-pass-noaccess')
+    else
+      content_tag(:span, lock + ' '.html_safe + l('key.macro.not_found'), class: 'vault-pass-notfound')
+    end
+  end
 end
