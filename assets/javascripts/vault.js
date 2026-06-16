@@ -268,3 +268,44 @@ jQuery(function() {
     if (e.key === "Escape" || e.keyCode === 27) { vaultClosePicker(); }
   });
 });
+
+// ---- {{pass}} card modal: open the password card in an overlay (no navigation) ----
+function vaultCloseCard() {
+  var ov = document.getElementById("vault-card-overlay");
+  if (ov) { ov.parentNode.removeChild(ov); }
+}
+
+function vaultOpenCard(url, title) {
+  vaultCloseCard();
+  var ov = document.createElement("div");
+  ov.id = "vault-card-overlay";
+  ov.className = "vault-card-overlay";
+  ov.setAttribute("onclick", "if(event.target===this)vaultCloseCard();");
+
+  var box = document.createElement("div");
+  box.className = "vault-card-modal";
+  box.innerHTML =
+    "<div class='vault-card-close' onclick='vaultCloseCard();'>&#x2715;</div>" +
+    "<h3 class='vault-card-mtitle'><i class='fa fa-lock fa-fw'></i> " +
+      jQuery("<span>").text(title || "").html() + "</h3>" +
+    "<div class='vault-card-mbody'>" + vaultI18n("loading", "Loading…") + "</div>";
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+
+  jQuery.ajax({ url: url, dataType: "html" })
+    .done(function(html) { box.querySelector(".vault-card-mbody").innerHTML = html; })
+    .fail(function() { window.location = url.replace(/\/card(\?.*)?$/, ""); });
+}
+
+// Click a {{pass}} link → open the card modal instead of navigating.
+// data-card-url absent (older render / no JS) → default navigation kept.
+jQuery(document).on("click", ".vault-pass-link", function(e) {
+  var url = jQuery(this).data("card-url");
+  if (!url) { return; }
+  e.preventDefault();
+  vaultOpenCard(url, jQuery(this).text());
+});
+
+jQuery(document).on("keydown", function(e) {
+  if (e.key === "Escape" || e.keyCode === 27) { vaultCloseCard(); }
+});
