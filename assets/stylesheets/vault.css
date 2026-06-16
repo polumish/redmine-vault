@@ -38,7 +38,7 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 .edit_vault_key .box input[type='text'], .new_vault_key .box input[type='text'] { height: 26px; }
 .edit_vault_key textarea.wiki-edit, .new_vault_key textarea.wiki-edit { min-height: 56px; height: 56px; }
 .edit_vault_key .vault-attachments, .new_vault_key .vault-attachments { margin: 4px 0; }
-#vault_whitelist { margin-top: 6px; }
+#vault_whitelist { margin-top: 6px; text-align: center; }
 
 /* ---- two-column edit form ---- */
 .vault-form-cols { display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap; }
@@ -65,7 +65,7 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 #vault_whitelist .vault-acl td { padding: 0 8px; vertical-align: top; }
 #vault_whitelist .vault-acl td.buttons { vertical-align: middle; text-align: center; padding: 0 6px; }
 #vault_whitelist .vault-acl label { float: none; margin: 0 0 3px 0; width: auto; display: block; font-weight: normal; color: #555; }
-#vault_whitelist .vault-acl select { width: 190px; min-width: 0; }
+#vault_whitelist .vault-acl select { width: 190px; min-width: 0; text-align: left; }
 
 /* ---- list toolbar ---- */
 .vault-toolbar { margin: 0 0 8px 0; }
