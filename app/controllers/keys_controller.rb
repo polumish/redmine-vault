@@ -1,7 +1,7 @@
 class KeysController < ApplicationController
   before_action :find_project_by_project_id
   before_action :authorize
-  before_action :find_key, only: [ :show, :edit, :update, :destroy, :copy ]
+  before_action :find_key, only: [ :show, :edit, :update, :destroy, :copy, :card ]
   before_action :find_keys, only: [ :context_menu ]
   accept_api_auth :index, :show, :create, :update, :destroy
 
@@ -161,6 +161,15 @@ class KeysController < ApplicationController
         format.api  { render json: key_json(@key) }
       end
     end
+  end
+
+  # Render just the password card (no layout) for the {{pass}} macro modal.
+  def card
+    unless @key.whitelisted?(User, @project)
+      head :forbidden and return
+    end
+    @key.decrypt!
+    render partial: 'keys/detail', locals: { key: @key }, layout: false
   end
 
   def destroy

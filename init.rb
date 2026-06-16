@@ -36,14 +36,14 @@ Redmine::Plugin.register :vault do
   name 'Vault plugin (fork)'
   author 'noshutdown.ru'
   description 'Plugin for keep keys and passwords. Fork of noshutdown.ru/redmine-plugins-vault'
-  version '0.8.0'
+  version '0.8.1'
   url 'https://git.half.net.ua/polumish/redmine-vault'
   author_url 'https://noshutdown.ru/'
 
   project_module :keys do
     permission :export_keys, keys: [ :keys_to_pdf ]
     permission :download_keys, key_files: [ :download, :preview ], key_attachments: [ :download, :preview ]
-    permission :view_keys, keys: [ :index, :edit, :show, :context_menu, :picker ]
+    permission :view_keys, keys: [ :index, :edit, :show, :context_menu, :picker, :card ]
     permission :edit_keys, keys: [ :index, :new, :create, :edit, :show, :update, :destroy, :copy ]
     permission :manage_whitelist_keys, keys: [ :index, :create, :edit, :show, :update, :copy ]
     permission :whitelist_keys, keys: [ :index, :edit, :show, :context_menu ]
@@ -70,7 +70,9 @@ Redmine::WikiFormatting::Macros.register do
       lock + link_to(label || key.name,
                      url_for(controller: 'keys', action: 'show',
                              project_id: key.project, id: key.id, only_path: true),
-                     class: 'vault-pass-link')
+                     class: 'vault-pass-link',
+                     data: { card_url: url_for(controller: 'keys', action: 'card',
+                                               project_id: key.project, id: key.id, only_path: true) })
     when :no_access
       content_tag(:span, lock + ' '.html_safe + l('key.macro.no_access'), class: 'vault-pass-noaccess')
     else

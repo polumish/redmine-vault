@@ -7,6 +7,7 @@ resources :projects do
   get '/key_attachments/:id/download', to: 'key_attachments#download', as: 'download_key_attachment'
   get '/key_attachments/:id/preview', to: 'key_attachments#preview', as: 'preview_key_attachment'
   get '/keys/:id/copy', to: 'keys#copy', as: 'copy_key'
+  get '/keys/:id/card', to: 'keys#card', as: 'card_key'
 end
 
 resources :vault_settings do

@@ -130,3 +130,23 @@ button.vault-jst-pass:hover { color: #c61a1a; }
 .vault-picker-item { display: block; padding: 5px 6px; text-decoration: none; color: #333; border-radius: 4px; }
 .vault-picker-item:hover { background: #eef; }
 .vault-picker-empty { color: #999; padding: 8px; }
+
+/* {{pass}} card modal */
+.vault-card-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  z-index: 10000; display: flex; justify-content: center;
+  align-items: flex-start; padding-top: 8vh;
+}
+.vault-card-modal {
+  position: relative; background: #fff; border-radius: 8px;
+  padding: 16px 20px; min-width: 340px; max-width: 90vw;
+  max-height: 80vh; overflow: auto; box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+}
+.vault-card-modal .vault-card { box-shadow: none; border: none; padding: 0; }
+.vault-card-close {
+  position: absolute; top: -12px; right: -12px; width: 28px; height: 28px;
+  line-height: 28px; text-align: center; font-weight: bold; color: #fff;
+  background: #e74c3c; border-radius: 50%; cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.vault-card-mtitle { margin: 0 0 10px; }
