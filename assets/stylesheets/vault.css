@@ -17,16 +17,28 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 .edit_vault_key .box label {
   padding-top: .45em;
 }
-.edit_vault_key .box input[type='text'] {
-	width: 250px;
+.edit_vault_key .box input[type='text'],
+.new_vault_key .box input[type='text'] {
+	width: 420px;
+	max-width: 100%;
 	box-sizing: border-box;
-	padding: .25em .35em;
-	height: 28px;
+	padding: .3em .4em;
+	height: 30px;
 }
+.edit_vault_key .box select,
+.new_vault_key .box select { padding: .25em .3em; }
+/* monospace the password + login (often an IP) inputs for readability */
+.edit_vault_key .box input#vault_key_body,
+.new_vault_key .box input#vault_key_body,
+.edit_vault_key .box input#vault_key_login,
+.new_vault_key .box input#vault_key_login { font-family: monospace; }
 
 #vault_whitelist select {
-	min-width: 250px;
+	min-width: 260px;
+	width: 260px;
+	vertical-align: top;
 }
+#vault_whitelist td.buttons { text-align: center; vertical-align: middle; padding: 0 10px; }
 
 /* ---- list toolbar ---- */
 .vault-toolbar { margin: 0 0 8px 0; }
@@ -41,6 +53,18 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 #keys_table td.buttons, #keys_table th:last-child { text-align: right; white-space: nowrap; }
 #keys_table td.buttons .keys-actions, #keys_table td.key-password-column .keys-actions { margin-left: 8px; }
 #keys_table td.key-password-column { white-space: nowrap; }
+
+/* ---- list polish: monospace values, zebra + hover, widths, air ---- */
+#keys_table label[id^="login_"],
+#keys_table label[id^="url_"],
+#keys_table a[id^="url_"],
+#keys_table td.key-password-column label { font-family: monospace; font-size: 95%; }
+#keys_table th, #keys_table td { padding: 7px 10px; border-color: #eee; }
+#keys_table tbody tr.even { background: #fafbfc; }
+#keys_table tbody tr:hover { background: #eef4fb; }
+#keys_table th:nth-child(2) { width: 28%; }   /* Name */
+#keys_table th:nth-child(3) { width: 32%; }   /* URL */
+#keys_table td:nth-child(3) { white-space: normal; word-break: break-word; }  /* URL wraps */
 
 /* ---- detail card ---- */
 .vault-card .attributes { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; }
