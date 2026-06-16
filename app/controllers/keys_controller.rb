@@ -71,6 +71,11 @@ class KeysController < ApplicationController
     end
   end
 
+  def picker
+    keys = @project.keys.order(:name).select { |k| k.whitelisted?(User, @project) }
+    render json: keys.map { |k| { id: k.id, name: k.name } }
+  end
+
   def new
     @key = Vault::Key.new(project: @project)
     @key.whitelist = ""
