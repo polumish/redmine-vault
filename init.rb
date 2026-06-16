@@ -23,10 +23,10 @@ class VaultViewHook < Redmine::Hook::ViewListener
       insert_pass:   l('key.toolbar.insert_pass'),
       picker_title:  l('key.picker.title'),
       picker_search: l('key.picker.search'),
-      picker_empty:  l('key.picker.empty'),
-      copied:        l('key.btn.clipboard')
+      picker_empty:  l('key.picker.empty')
     }
-    stylesheet_link_tag('vault', plugin: 'vault') +
+    stylesheet_link_tag('font-awesome.css', plugin: 'vault') +
+      stylesheet_link_tag('vault', plugin: 'vault') +
       javascript_include_tag('vault', plugin: 'vault') +
       javascript_tag("window.VAULT_I18N = #{i18n.to_json};")
   end

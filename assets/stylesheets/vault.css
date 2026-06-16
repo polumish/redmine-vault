@@ -50,8 +50,8 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 .vault-pass-noaccess, .vault-pass-notfound { color: #999; }
 
 /* ---- edit-form attachments: align under input column, keep Delete inside the box ---- */
-.edit_vault_key .vault-attachments { clear: left; padding-left: 180px; margin: 6px 0; }
-.edit_vault_key .vault-attachments .vault-attachments-label { float: left; margin-left: -180px; width: 175px;
+.edit_vault_key .vault-attachments, .new_vault_key .vault-attachments { clear: left; padding-left: 180px; margin: 6px 0; }
+.edit_vault_key .vault-attachments .vault-attachments-label, .new_vault_key .vault-attachments .vault-attachments-label { float: left; margin-left: -180px; width: 175px;
   font-weight: bold; padding-top: .45em; }
 .vault-attachment-row, .vault-new-attachment { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 3px 0; }
 .vault-attachment-del { white-space: nowrap; margin-left: 4px; }
