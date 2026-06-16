@@ -1,3 +1,40 @@
+## Version: 0.7.0 (16.06.2026)
+### Features
+- Wiki macro `{{pass(ID)}}` (and `{{pass(ID, "label")}}`) links to a password from
+  any Redmine text (issues, comments, wiki). Permission-aware: shows the name + link
+  to users on the key's whitelist, a neutral "(no access)" otherwise.
+- Editor toolbar button: a lock button on the text-formatting toolbar opens a picker
+  of the project's accessible passwords and inserts `{{pass(ID)}}` at the cursor.
+  New lightweight `keys#picker` JSON endpoint (id + name only, no decrypted bodies).
+- The single-password page is redesigned as a Redmine-native card: masked password
+  with reveal/copy, tag chips, attachments, and a rendered comment. Reached via an eye
+  icon (or the name) in the list.
+- "Copy link" action copies the `{{pass(ID)}}` macro to the clipboard.
+### UI
+- Passwords list: clean search toolbar (moved out of the heading), left-aligned text
+  columns, right-aligned actions, monospace login/url/password, visible id, zebra rows.
+- Edit form: two-column layout (fields | comment + access list), more compact; the
+  access list is wrapped in a tidy, width-constrained card.
+- The "Attached files" edit section is aligned within the tabular form.
+### Bugfixes
+- Editor/macro lock icon loads Font Awesome on every page, not just the plugin's pages.
+- The single-password reveal toggle works (the assets/JS are no longer double-loaded).
+
+## Version: 0.6.1 (15.06.2026)
+### Bugfixes
+- The key form is `multipart/form-data` again, so attached files actually upload.
+  (The new multi-file inputs used `file_field_tag`, which — unlike the form builder's
+  `file_field` — does not auto-enable multipart, so only the filename was submitted.)
+
+## Version: 0.6.0 (15.06.2026)
+### Features
+- Multiple files can be attached to a key, each with its own comment, on any key type
+  (including a plain `Vault::Password`). New `vault_attachments` table; bytes are
+  encrypted (AES-256-GCM). Migration 012 carries each key's existing single file over
+  as its first attachment (ciphertext copied verbatim, no re-encryption).
+- New `KeyAttachmentsController` (download/preview by id, project-scoped, API-key
+  capable). Form and show views list and manage multiple attachments.
+
 ## Version: 0.5.3 (12.06.2026)
 ### Security
 - Key files are encrypted with a dedicated always-on cipher (`FileCipher`,
