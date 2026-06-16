@@ -10,6 +10,7 @@ require File.expand_path('vendor/vault_cipher', __dir__)
 require File.expand_path('vendor/redmine_cipher', __dir__)
 require File.expand_path('vendor/encryptor', __dir__)
 require File.expand_path('vendor/file_cipher', __dir__)
+require File.expand_path('vendor/body_cipher', __dir__)
 
 # Project association
 require File.expand_path('vendor/project_patch', __dir__)
