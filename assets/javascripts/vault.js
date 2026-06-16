@@ -231,28 +231,39 @@ function vaultOpenPicker(textarea) {
   search.focus();
 }
 
-// Add a 🔒 button to every jsToolBar (textile editor).
+// Add a 🔒 button to one jsToolBar (.jstElements), wired to its textarea.
+function vaultAddPassButton(bar) {
+  if (!bar || bar.querySelector(".vault-jst-pass")) { return; }
+  var block = bar.closest ? bar.closest(".jstBlock") : null;
+  var scope = block || bar.parentNode || document;
+  var textarea = scope.querySelector("textarea");
+  if (!textarea) { return; }
+  var btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "vault-jst-pass";
+  btn.title = vaultI18n("insert_pass", "Insert password link");
+  btn.innerHTML = "<i class='fa fa-lock'></i>";
+  btn.addEventListener("click", function(e) { e.preventDefault(); vaultOpenPicker(textarea); });
+  bar.appendChild(btn);
+}
 function vaultAddToolbarButtons() {
   var bars = document.querySelectorAll(".jstElements");
-  for (var i = 0; i < bars.length; i++) {
-    var bar = bars[i];
-    if (bar.querySelector(".vault-jst-pass")) { continue; }
-    var textarea = bar.parentNode ? bar.parentNode.querySelector("textarea") : null;
-    if (!textarea) { continue; }
-    (function(ta, b) {
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "vault-jst-pass";
-      btn.title = vaultI18n("insert_pass", "Insert password link");
-      btn.innerHTML = "<i class='fa fa-lock'></i>";
-      btn.addEventListener("click", function(e) { e.preventDefault(); vaultOpenPicker(ta); });
-      b.appendChild(btn);
-    })(textarea, bar);
-  }
+  for (var i = 0; i < bars.length; i++) { vaultAddPassButton(bars[i]); }
 }
 
 jQuery(function() {
-  setTimeout(vaultAddToolbarButtons, 300); // after Redmine builds its toolbars
+  vaultAddToolbarButtons();
+  // Toolbars are built by inline scripts; retry briefly in case any are late.
+  var tries = 0;
+  var iv = setInterval(function() {
+    vaultAddToolbarButtons();
+    if (++tries >= 10) { clearInterval(iv); }
+  }, 400);
+  // Editors added later (e.g. inline issue edit, quoted reply) — catch them too.
+  if (window.MutationObserver) {
+    new MutationObserver(function() { vaultAddToolbarButtons(); })
+      .observe(document.body, { childList: true, subtree: true });
+  }
   jQuery(document).on("keydown", function(e) {
     if (e.key === "Escape" || e.keyCode === 27) { vaultClosePicker(); }
   });
