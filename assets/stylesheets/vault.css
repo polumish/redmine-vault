@@ -7,8 +7,6 @@
 
 #vault_context_menu li.conext_menu { color: #888; text-decoration: none; font-size: 100%; padding: 0; cursor: pointer; }
 #vault_context_menu a.conext_menu { color: #888; text-decoration: none; font-size: 100%; padding: 0; }
-#vault_whitelist table.whitelist_users { margin: 0; padding: 3px 0 3px 0; padding-left: 180px; min-height: 1.8em; clear:left; overflow:hidden;}
-#vault_whitelist label.whitelist_users { margin: 0; padding: 3px 0 3px 0; min-height: 1.8em; clear:left; overflow:hidden;}
 
 a.keys-links { color:#484848; text-decoration: none; }
 a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none; cursor: pointer; }
@@ -33,12 +31,6 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 .edit_vault_key .box input#vault_key_login,
 .new_vault_key .box input#vault_key_login { font-family: monospace; }
 
-#vault_whitelist select {
-	min-width: 260px;
-	width: 260px;
-	vertical-align: top;
-}
-#vault_whitelist td.buttons { text-align: center; vertical-align: middle; padding: 0 10px; }
 
 /* ---- compact edit form: tighter vertical rhythm so it fits on one screen ---- */
 .edit_vault_key .box.tabular p, .new_vault_key .box.tabular p { margin: 5px 0; }
@@ -63,19 +55,17 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 .edit_vault_key .vault-form-col .vault-attachments, .new_vault_key .vault-form-col .vault-attachments { padding-left: 95px; }
 .edit_vault_key .vault-form-col .vault-attachments .vault-attachments-label,
 .new_vault_key .vault-form-col .vault-attachments .vault-attachments-label { margin-left: -95px; width: 90px; }
-/* access list fits the column: full-width table, two slim selects */
-.vault-form-col #vault_whitelist table.whitelist_users { width: 100%; padding-left: 0; }
-.vault-form-col #vault_whitelist select { width: 46%; min-width: 0; }
-
-/* ---- access list as a tidy checkbox card ---- */
+/* ---- access list: tidy gray card, width-constrained (dual select) ---- */
 #vault_whitelist .vault-acl-head label { float: none; margin: 0 0 5px 0; width: auto; font-weight: bold; padding: 0; }
 #vault_whitelist .vault-acl {
-  border: 1px solid #d6d9de; border-radius: 6px; background: #f6f7f9;
-  padding: 5px; max-height: 200px; overflow-y: auto;
+  display: inline-block; max-width: 100%;
+  border: 1px solid #d6d9de; border-radius: 6px; background: #f6f7f9; padding: 10px;
 }
-#vault_whitelist .vault-acl-item { display: block; float: none; margin: 0; width: auto; padding: 4px 8px; border-radius: 4px; font-weight: normal; cursor: pointer; }
-#vault_whitelist .vault-acl-item:hover { background: #e9eef5; }
-#vault_whitelist .vault-acl-item input { float: none; margin: 0 8px 0 0; width: auto; vertical-align: middle; }
+#vault_whitelist .vault-acl table.whitelist_users { margin: 0; padding: 0; width: auto; }
+#vault_whitelist .vault-acl td { padding: 0 8px; vertical-align: top; }
+#vault_whitelist .vault-acl td.buttons { vertical-align: middle; text-align: center; padding: 0 6px; }
+#vault_whitelist .vault-acl label { float: none; margin: 0 0 3px 0; width: auto; display: block; font-weight: normal; color: #555; }
+#vault_whitelist .vault-acl select { width: 190px; min-width: 0; }
 
 /* ---- list toolbar ---- */
 .vault-toolbar { margin: 0 0 8px 0; }

@@ -73,16 +73,32 @@
 
     <% if User.current.allowed_to?(:manage_whitelist_keys, @project) %>
       <% whitelisted = @key.whitelist.split(",") %>
-      <% members = @project.memberships.active.sort.map(&:principal) %>
+      <% all_users = @project.memberships.active.where(users: {type: 'User'}).sort.map { |u| [u.principal, u.principal.id.to_s] } %>
+      <% all_groups = @project.memberships.active.where(users: {type: 'Group'}).sort.map { |u| [u.principal, u.principal.id.to_s] } %>
+      <% all_users = all_groups | all_users %>
       <div id="vault_whitelist">
         <p class="vault-acl-head"><label><%= t('key.attr.whitelist') %></label></p>
         <div class="vault-acl">
-          <% members.each do |member| %>
-            <label class="vault-acl-item">
-              <%= check_box_tag 'whitelist[]', member.id.to_s, whitelisted.include?(member.id.to_s), id: nil %>
-              <%= member %>
-            </label>
-          <% end %>
+          <table class="whitelist_users">
+            <tr>
+              <td>
+                <%= label_tag 'selected_users', t('key.whitelist.selected_members') %><br />
+                <%= select_tag 'whitelist', options_for_select(all_users.select { |u| whitelisted.include?(u[1]) }),
+                      id: 'selected_users', multiple: true, size: 6,
+                      ondblclick: "moveOptions(this.form.selected_users, this.form.available_users)" %>
+              </td>
+              <td class="buttons">
+                <input type="button" value="&#8594;" onclick="moveOptions(this.form.selected_users, this.form.available_users);" /><br />
+                <input type="button" value="&#8592;" onclick="moveOptions(this.form.available_users, this.form.selected_users);" />
+              </td>
+              <td>
+                <%= label_tag 'available_users', t('key.whitelist.available_members') %><br />
+                <%= select_tag 'available_users', options_for_select(all_users.select { |u| not whitelisted.include?(u[1]) }),
+                      id: 'available_users', multiple: true, size: 6,
+                      ondblclick: "moveOptions(this.form.available_users, this.form.selected_users)" %>
+              </td>
+            </tr>
+          </table>
         </div>
       </div>
     <% end %>
@@ -95,4 +111,11 @@
   <% else %>
 
   <% end %>
+<% end %>
+<%= javascript_tag do %>
+ $(document).ready(function(){
+   $('#vault_whitelist').closest('form').submit(function(){
+     $('#selected_users option').prop('selected', true);
+   });
+ });
 <% end %>
