@@ -1,5 +1,8 @@
 class ReencryptBodiesGcm < ActiveRecord::Migration[7.2]
   def up
+    # GCM ciphertext (iv+tag+base64+marker) is ~33% + 34 bytes larger than the
+    # plaintext, so a varchar(255) body overflows for longer values. Widen first.
+    change_column :keys, :body, :text
     Vault::Password.reset_column_information
     migrated = 0
     skipped  = 0
