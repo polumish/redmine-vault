@@ -43,7 +43,7 @@ Redmine::Plugin.register :vault do
   project_module :keys do
     permission :export_keys, keys: [ :keys_to_pdf ]
     permission :download_keys, key_files: [ :download, :preview ], key_attachments: [ :download, :preview ]
-    permission :view_keys, keys: [ :index, :edit, :show, :context_menu, :picker ]
+    permission :view_keys, keys: [ :index, :edit, :show, :context_menu, :picker, :card ]
     permission :edit_keys, keys: [ :index, :new, :create, :edit, :show, :update, :destroy, :copy ]
     permission :manage_whitelist_keys, keys: [ :index, :create, :edit, :show, :update, :copy ]
     permission :whitelist_keys, keys: [ :index, :edit, :show, :context_menu ]
