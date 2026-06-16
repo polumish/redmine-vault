@@ -1,3 +1,12 @@
+## Version: 0.8.1 (16.06.2026)
+### Features
+- The `{{pass(ID)}}` link now opens the password **card in a modal overlay** on the
+  same page (masked body with reveal/copy, login, url, tags, attachments, comment)
+  instead of navigating to the card page — so reading a password from a wiki article
+  or issue no longer loses your place. New session-auth `keys#card` endpoint renders
+  the existing `_detail` partial, guarded by `whitelisted?` (403 otherwise). The macro
+  keeps its `href` as a no-JS fallback. ESC / × / click-outside close the modal.
+
 ## Version: 0.8.0 (16.06.2026)
 ### Security
 - Password bodies are now encrypted with authenticated **AES-256-GCM** (`BodyCipher`,
