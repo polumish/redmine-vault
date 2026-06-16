@@ -70,7 +70,9 @@ Redmine::WikiFormatting::Macros.register do
       lock + link_to(label || key.name,
                      url_for(controller: 'keys', action: 'show',
                              project_id: key.project, id: key.id, only_path: true),
-                     class: 'vault-pass-link')
+                     class: 'vault-pass-link',
+                     data: { card_url: url_for(controller: 'keys', action: 'card',
+                                               project_id: key.project, id: key.id, only_path: true) })
     when :no_access
       content_tag(:span, lock + ' '.html_safe + l('key.macro.no_access'), class: 'vault-pass-noaccess')
     else
