@@ -123,8 +123,9 @@ jQuery(document).on("click", ".vault-reveal", function(e) {
   e.preventDefault();
   var el = document.getElementById(jQuery(this).data("target"));
   if (!el) { return; }
-  var hidden = (el.style.display === "none" || el.style.display === "");
-  el.style.display = hidden ? "inline" : "none";
+  var show = (el.style.display === "none" || el.style.display === "");
+  el.style.display = show ? "inline" : "none";
+  jQuery(el).siblings(".vault-mask").css("display", show ? "none" : "inline");
   jQuery(this).find("i.fa").toggleClass("fa-eye fa-eye-slash");
 });
 

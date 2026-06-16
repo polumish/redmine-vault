@@ -19,7 +19,7 @@
         <div class="label"><%= t('key.attr.body') %></div>
         <div class="value vault-pass-value">
           <% if key.body.present? %>
-            <label>*********</label>
+            <label class="vault-mask">*********</label>
             <label id="plain_pass_show_<%= key.id %>" style="display:none;"><%= key.body.to_s.force_encoding('UTF-8') %></label>
             <a href="#" class="keys-actions vault-reveal" data-target="plain_pass_show_<%= key.id %>" title="<%= t('key.btn.show') %>"><i class="fa fa-eye fa-fw"></i></a>
             <a href="#" class="keys-actions" data-clipboard-target="plain_pass_show_<%= key.id %>" title="<%= t('key.btn.clipboard') %>"><i class="fa fa-clipboard fa-fw"></i></a>
