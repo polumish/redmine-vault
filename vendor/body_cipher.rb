@@ -43,6 +43,21 @@ module BodyCipher
     (cipher.update(enc) + cipher.final).force_encoding('UTF-8')
   end
 
+  # Read a stored body to plaintext: GCM for marked values, legacy Encryptor
+  # fallback for unmarked/un-migrated values or if GCM verification fails — so a
+  # bad row never 500s a read. nil/empty pass through unchanged.
+  def self.read(blob)
+    return blob if blob.nil? || blob.to_s.empty?
+    if marked?(blob)
+      begin
+        return decrypt(blob)
+      rescue StandardError
+        # corrupted / colliding marker — fall through to legacy
+      end
+    end
+    Encryptor.decrypt(blob).to_s.force_encoding('UTF-8')
+  end
+
   def self.key
     secret = Rails.application.secret_key_base.to_s
     OpenSSL::Digest::SHA256.digest("redmine-vault:body-cipher:#{secret}")
