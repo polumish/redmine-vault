@@ -50,7 +50,7 @@ class KeysController < ApplicationController
     end
 
     @keys = @keys.order(sort_clause) unless @keys.nil?
-    @keys = @keys.select { |key| key.whitelisted?(User,@project) } unless @keys.nil?
+    @keys = @keys.select { |key| key.viewable?(@project) } unless @keys.nil?
     @keys = [] if @keys.nil? #hack for decryption
 
     @limit = per_page_option
@@ -72,7 +72,7 @@ class KeysController < ApplicationController
   end
 
   def picker
-    keys = @project.keys.order(:name).select { |k| k.whitelisted?(User, @project) }
+    keys = @project.keys.order(:name).select { |k| k.viewable?(@project) }
     render json: keys.map { |k| { id: k.id, name: k.name } }
   end
 
@@ -136,7 +136,7 @@ class KeysController < ApplicationController
   end
 
   def edit
-    if !@key.whitelisted?(User,@project)
+    if !@key.viewable?(@project)
       render_error t("error.key.not_whitelisted")
       return
     else
@@ -148,7 +148,7 @@ class KeysController < ApplicationController
   end
 
   def show
-    if !@key.whitelisted?(User,@project)
+    if !@key.viewable?(@project)
       respond_to do |format|
         format.html { render_error t("error.key.not_whitelisted") }
         format.api  { render json: { errors: [t("error.key.not_whitelisted")] }, status: :forbidden }
@@ -165,7 +165,7 @@ class KeysController < ApplicationController
 
   # Render just the password card (no layout) for the {{pass}} macro modal.
   def card
-    unless @key.whitelisted?(User, @project)
+    unless @key.viewable?(@project)
       head :forbidden and return
     end
     @key.decrypt!
@@ -206,7 +206,9 @@ class KeysController < ApplicationController
   end
 
   def key_params
-    params.require(:vault_key).permit(:type, :name, :body, :login, :url, :comment)
+    permitted = [:type, :name, :body, :login, :url, :comment]
+    permitted << :sensitive if User.current.allowed_to?(:view_sensitive_keys, @project)
+    params.require(:vault_key).permit(*permitted)
   end
 
   # The uploaded file (web form or multipart API) for a Vault::KeyFile, or nil.
