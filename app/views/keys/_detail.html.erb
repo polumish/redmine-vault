@@ -55,4 +55,50 @@
       <%= textilizable key.comment %>
     </div>
   <% end %>
+
+  <% versions = key.vault_key_versions.order(changed_at: :desc, id: :desc) %>
+  <% if versions.any? %>
+    <div class="vault-card-history">
+      <h3><%= t('key.history.title') %></h3>
+      <table class="list">
+        <thead>
+          <tr>
+            <th><%= t('key.history.when') %></th>
+            <th><%= t('key.history.who') %></th>
+            <th><%= t('key.history.changed') %></th>
+            <th><%= t('key.history.values') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% versions.each do |v| %>
+            <tr class="<%= cycle('odd', 'even') %>">
+              <td><%= format_time(v.changed_at) %></td>
+              <td><%= v.changed_by ? v.changed_by.name : '—' %></td>
+              <td>
+                <% v.changed_field_list.each do |f| %><span class="vault-tag-chip"><%= t("key.attr.#{f}", default: f) %></span> <% end %>
+              </td>
+              <td>
+                <% if v.changed_field_list.include?('body') && v.decrypted_body.present? %>
+                  <div class="vault-pass-value">
+                    <label class="vault-mask">*********</label>
+                    <label id="hist_pass_<%= v.id %>" style="display:none;"><%= v.decrypted_body.to_s.force_encoding('UTF-8') %></label>
+                    <a href="#" class="keys-actions vault-reveal" data-target="hist_pass_<%= v.id %>" title="<%= t('key.btn.show') %>"><i class="fa fa-eye fa-fw"></i></a>
+                    <a href="#" class="keys-actions" data-clipboard-target="hist_pass_<%= v.id %>" title="<%= t('key.btn.clipboard') %>"><i class="fa fa-clipboard fa-fw"></i></a>
+                  </div>
+                <% end %>
+                <% %w[login url name comment whitelist].each do |f| %>
+                  <% if v.changed_field_list.include?(f) && v.public_send(f).present? %>
+                    <div><span class="vault-history-label"><%= t("key.attr.#{f}") %>:</span> <%= v.public_send(f) %></div>
+                  <% end %>
+                <% end %>
+                <% if v.changed_field_list.include?('sensitive') %>
+                  <div><span class="vault-history-label"><%= t('key.attr.sensitive') %>:</span> <%= v.sensitive ? '☑' : '☐' %></div>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
 </div>

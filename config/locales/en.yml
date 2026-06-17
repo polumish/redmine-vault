@@ -81,6 +81,13 @@ en:
       comment: "Comment"
       delete: "Delete"
 
+    history:
+      title: "History"
+      when: "Changed at"
+      who: "By"
+      changed: "Changed fields"
+      values: "Previous values"
+
   context_menu:
     copy_key: "Copy Password"
     copy_url: "Copy URL"

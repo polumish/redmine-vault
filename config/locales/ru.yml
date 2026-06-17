@@ -81,6 +81,13 @@ ru:
       comment: "Комментарий"
       delete: "Удалить"
 
+    history:
+      title: "История"
+      when: "Изменено"
+      who: "Кем"
+      changed: "Изменённые поля"
+      values: "Прежние значения"
+
   context_menu:
       copy_key: "Copy Key"
       copy_url: "Copy URL"
