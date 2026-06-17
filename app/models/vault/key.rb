@@ -9,6 +9,11 @@ module Vault
     has_many :vault_key_versions, class_name: 'Vault::KeyVersion',
              foreign_key: 'vault_key_id', dependent: :destroy
 
+    AUDITED_FIELDS = %w[name login url comment body whitelist sensitive].freeze
+
+    before_update :stage_version
+    after_update  :write_version
+
     def encrypt!
       self
     end
@@ -67,6 +72,33 @@ module Vault
     def sensitivity_ok?(project)
       return true unless sensitive?
       User.current.admin? || User.current.allowed_to?(:view_sensitive_keys, project)
+    end
+
+    # Snapshot the PRIOR state while dirty info is available. `*_was` are the
+    # persisted (old) values; body_was is the old ciphertext, unaffected by
+    # Vault::Password#encrypt! (which only mutates the in-memory new body).
+    def stage_version
+      changed = AUDITED_FIELDS & changed_attribute_names_to_save
+      @staged_version = changed.empty? ? nil : {
+        name:           name_was,
+        login:          login_was,
+        url:            url_was,
+        comment:        comment_was,
+        body:           body_was,
+        whitelist:      whitelist_was,
+        sensitive:      sensitive_was,
+        changed_fields: changed.join(','),
+        changed_by_id:  User.current&.id,
+        changed_at:     Time.current
+      }
+      true
+    end
+
+    # Persist the staged snapshot inside the same save transaction (key.id stable).
+    def write_version
+      vault_key_versions.create!(@staged_version) if @staged_version
+    ensure
+      @staged_version = nil
     end
 
   end
