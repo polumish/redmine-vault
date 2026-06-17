@@ -1,3 +1,19 @@
+## Version: 0.9.0 (17.06.2026)
+### Features / Security
+- **Sensitive passwords.** A password can be flagged **Sensitive** (`keys.sensitive`,
+  migration 015). Sensitive passwords are visible only to users with the new
+  `view_sensitive_keys` permission (Managers / Sysadmins / admins); developers with
+  `view_keys` see every non-sensitive password but not the sensitive ones. Access stays
+  role/membership-driven — a new project member reads the non-sensitive passwords at once,
+  removal from the project revokes access.
+- A single gate `Vault::Key#viewable?(project)` (= whitelist AND sensitivity rule) guards
+  every read path: list, show, edit, card, picker, the right-click context menu, and the
+  `{{pass}}` macro (a sensitive key renders "(no access)" for users without the permission).
+- The **Sensitive** checkbox on the key form and the `:sensitive` param are limited to
+  `view_sensitive_keys` holders; a 🔒 badge marks sensitive passwords in the list.
+- Hardened the right-click **context menu**, which previously served a key's decrypted body
+  with no access check (project-ownership only) — it is now gated by `viewable?`.
+
 ## Version: 0.8.3 (16.06.2026)
 ### UI
 - Passwords **list**: clicking a password row (or its name / eye icon) now opens the
