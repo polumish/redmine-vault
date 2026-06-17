@@ -6,6 +6,8 @@ module Vault
     has_and_belongs_to_many :tags, class_name: 'Vault::Tag'
     has_many :vault_attachments, class_name: 'Vault::Attachment',
              foreign_key: 'vault_key_id', dependent: :destroy
+    has_many :vault_key_versions, class_name: 'Vault::KeyVersion',
+             foreign_key: 'vault_key_id', dependent: :destroy
 
     def encrypt!
       self
