@@ -184,7 +184,7 @@ class KeysController < ApplicationController
   end
 
   def context_menu
-    #FIXME
+    head(:forbidden) and return if @keys.blank?
     @keys.map(&:decrypt!)
     render layout: false
   end
@@ -202,7 +202,11 @@ class KeysController < ApplicationController
     @keys=Vault::Key.find(params[:ids])
     unless @keys.all? { |k| k.project_id == @project.id }
       redirect_to project_keys_path(@project), notice: t('alert.key.not_found')
+      return
     end
+    # Gate the right-click menu by the same rule as every other read path, so a
+    # sensitive (or non-whitelisted) key's decrypted body is never served here.
+    @keys = @keys.select { |k| k.viewable?(@project) }
   end
 
   def key_params

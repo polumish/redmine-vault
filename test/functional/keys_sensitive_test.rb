@@ -48,4 +48,12 @@ class KeysSensitiveTest < Redmine::ControllerTest
                            vault_key: { name: 'Normal', sensitive: '1' } }
     assert_equal false, Vault::Password.find(@normal.id).sensitive
   end
+
+  def test_context_menu_hides_sensitive_body_without_permission
+    sek = Vault::Password.create!(project: @project, name: 'CtxSecret', body: 'UNIQUEBODY12345', sensitive: true)
+    @request.session[:user_id] = 2
+    post :context_menu, params: { project_id: @project.identifier, ids: [sek.id] }
+    assert_response :forbidden
+    assert_not_includes response.body.to_s, 'UNIQUEBODY12345'
+  end
 end
