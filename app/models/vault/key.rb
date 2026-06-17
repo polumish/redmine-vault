@@ -84,9 +84,13 @@ module Vault
     # old body is read as ciphertext straight from the DB row (still the pre-UPDATE
     # value here) and stored verbatim, only when it actually changed.
     def stage_version
-      changed   = META_FIELDS & changed_attribute_names_to_save
-      old_body  = persisted_body
-      body_diff = BodyCipher.read(old_body) != BodyCipher.read(self.body)
+      changed = META_FIELDS & changed_attribute_names_to_save
+      # Only Vault::Password has an encrypted body to audit. Guard so a base/other
+      # type whose `body` may be plaintext (e.g. via Vault::Key.import) can't crash
+      # the update in BodyCipher.read's legacy decrypt fallback — and so we skip the
+      # extra SELECT for non-password types.
+      old_body  = is_a?(Vault::Password) ? persisted_body : nil
+      body_diff = is_a?(Vault::Password) && BodyCipher.read(old_body) != BodyCipher.read(self.body)
       changed << 'body' if body_diff
       @staged_version = changed.empty? ? nil : {
         name:           name_was,
