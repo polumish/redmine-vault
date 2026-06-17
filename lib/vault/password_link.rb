@@ -7,7 +7,7 @@ module Vault
       key = Vault::Key.find_by(id: id)
       return { state: :not_found } if key.nil?
       if User.current.allowed_to?(:view_keys, key.project) &&
-         key.whitelisted?(User, key.project)
+         key.viewable?(key.project)
         { state: :ok, key: key }
       else
         { state: :no_access }

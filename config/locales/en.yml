@@ -58,6 +58,7 @@ en:
       comment: "Comment"
       whitelist: "Access list"
       id: "ID"
+      sensitive: "Sensitive"
 
     whitelist:
       selected_members: "Selected Members"

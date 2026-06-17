@@ -3,6 +3,7 @@
         data: { card_url: url_for(controller: 'keys', action: 'card', project_id: @project, id: key, only_path: true),
                 card_title: key.name } %>
   <span class="vault-id">#<%= key.id %></span>
+  <% if key.sensitive? %><span class="vault-sensitive-badge" title="<%= t('key.attr.sensitive') %>"><i class="fa fa-lock fa-fw"></i></span><% end %>
 </td>
 <td>
   <% unless key.url.blank? %>

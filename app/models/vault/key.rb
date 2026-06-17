@@ -55,6 +55,18 @@ module Vault
       return self.whitelist.split(",").include?(user.current.id.to_s)
     end
 
+    # Combined read gate: the per-key whitelist AND the sensitivity rule.
+    def viewable?(project)
+      whitelisted?(User, project) && sensitivity_ok?(project)
+    end
+
+    # Non-sensitive keys are fine for anyone with view_keys; sensitive ones need
+    # admin or the view_sensitive_keys permission.
+    def sensitivity_ok?(project)
+      return true unless sensitive?
+      User.current.admin? || User.current.allowed_to?(:view_sensitive_keys, project)
+    end
+
   end
 
   class Vault::KeysVaultTags < ActiveRecord::Base
