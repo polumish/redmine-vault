@@ -29,4 +29,12 @@ class VaultPasswordLinkTest < ActiveSupport::TestCase
     key = Vault::Key.create!(project: @project, name: 'k-na', type: 'Vault::Password', whitelist: '99999')
     assert_equal :no_access, Vault::PasswordLink.resolve(key.id)[:state]
   end
+
+  def test_no_access_for_sensitive_without_permission
+    Role.find(1).add_permission!(:view_keys)
+    Role.find(1).remove_permission!(:view_sensitive_keys)
+    User.current = User.find(2)
+    key = Vault::Password.create!(project: @project, name: 'sek', type: 'Vault::Password', sensitive: true, whitelist: '')
+    assert_equal :no_access, Vault::PasswordLink.resolve(key.id)[:state]
+  end
 end
