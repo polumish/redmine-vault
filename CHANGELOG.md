@@ -1,3 +1,26 @@
+## Version: 0.10.0 (17.06.2026)
+### Features
+- **Password change history / field-level audit.** Every update that changes an
+  audited field (`name`, `login`, `url`, `comment`, `body`, `whitelist`, `sensitive`)
+  records an immutable snapshot of the prior state in the new `vault_key_versions`
+  table (migration 016), together with who changed it (`changed_by_id`) and when
+  (`changed_at`). Versions are kept indefinitely and removed with the key.
+- **History section on the key detail card** (read-only): previous values listed
+  newest-first; an old password reuses the same masked reveal + copy widget as the
+  current one. History is gated by `Vault::Key#viewable?` (whitelist + sensitivity),
+  exactly like the current body — no new permission, no separate access path.
+- Body changes are detected **semantically** (old decrypted vs new decrypted), so a
+  metadata-only edit that resubmits the unchanged password does not record a spurious
+  "password changed" entry. The old password is stored as ciphertext (verbatim from
+  the DB) and only when it actually changed — the versions table never holds plaintext.
+- Capture covers all write paths (web, JSON API, console) via `before_update` /
+  `after_update` on `Vault::Key`, committed atomically with the key update. A shared
+  `BodyCipher.read` helper (GCM with legacy fallback) decodes old bodies.
+
+### Notes
+- Tags and attachments are not audited in this release (they are saved after the key
+  record, outside the capture callback). Deferred.
+
 ## Version: 0.9.0 (17.06.2026)
 ### Features / Security
 - **Sensitive passwords.** A password can be flagged **Sensitive** (`keys.sensitive`,
