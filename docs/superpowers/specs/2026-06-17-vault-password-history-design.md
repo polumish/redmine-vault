@@ -76,29 +76,39 @@ the JSON API, and console edits.
 
 Split into capture (before) + persist (after) so the snapshot reads dirty state
 while it's available, but the row is written **after** the key is saved — inside
-the same DB transaction, with a stable `keys.id`:
+the same DB transaction, with a stable `keys.id`.
+
+**Metadata fields** (`name login url comment whitelist sensitive`) are detected
+with ordinary dirty tracking (`*_was`) — they are not transformed on save, so a
+string diff is a true diff. **`body` needs special handling** (see the critical
+note below): its change is detected *semantically* (old decrypted vs new
+decrypted), and the old value is read as ciphertext straight from the DB.
 
 ```
-AUDITED = %w[name login url comment body whitelist sensitive]
+META_FIELDS = %w[name login url comment whitelist sensitive]
 
 before_update :stage_version
 after_update  :write_version
 
-# before_update: dirty info available; *_was = persisted (old) values.
+# before_update: dirty info available; *_was = persisted (old) metadata values.
 def stage_version
-  changed = AUDITED & changed_attribute_names_to_save  # dirty audited columns
+  changed   = META_FIELDS & changed_attribute_names_to_save  # dirty metadata cols
+  old_body  = persisted_body                                 # raw old ciphertext from DB
+  body_diff = BodyCipher.read(old_body) != BodyCipher.read(self.body)  # semantic
+  changed << 'body' if body_diff
   @staged_version = changed.empty? ? nil : {
     name:           name_was,
     login:          login_was,
     url:            url_was,
     comment:        comment_was,
-    body:           body_was,        # OLD ciphertext, verbatim
+    body:           body_diff ? old_body : nil,  # old ciphertext, only if pw changed
     whitelist:      whitelist_was,
     sensitive:      sensitive_was,
     changed_fields: changed.join(','),
     changed_by_id:  User.current&.id,
     changed_at:     Time.current
   }
+  true
 end
 
 # after_update: still inside the save transaction; key.id is stable.
@@ -107,18 +117,43 @@ def write_version
 ensure
   @staged_version = nil
 end
+
+# The body as currently stored in the DB (old value, before this UPDATE).
+def persisted_body
+  Vault::Key.where(id: id).pick(:body)
+end
 ```
+
+### CRITICAL: why body needs semantic detection (not raw dirty tracking)
+
+`Vault::Password` has `before_save :encrypt!` / `after_save :decrypt!`, and the
+**edit form pre-fills the password field with the decrypted plaintext** (`edit`
+calls `decrypt!`, then `f.text_field :body`). So on *every* form submit, `body`
+comes back as plaintext while the stored value is ciphertext. Naive
+`body_changed?` / `changed_attribute_names_to_save` would therefore report `body`
+as changed on **every edit** — even a URL-only change — producing a spurious
+"password changed" version and duplicating the password each time. Comparing the
+**decrypted** old and new values fixes this: a version records `body` only when
+the actual secret changed.
+
+- `persisted_body` reads the old ciphertext directly from the DB row (still the
+  pre-UPDATE value inside `before_update`). This is bulletproof regardless of the
+  in-memory encrypt/decrypt state — unlike `body_was`/`body_in_database`, which
+  can be left holding plaintext by the after-save `decrypt!`.
+- At `before_update` (after `encrypt!`), `self.body` is the new ciphertext (or
+  nil for `Vault::KeyFile`); `BodyCipher.read` decrypts both sides for the
+  comparison. For non-password keys both sides are nil → never a body change.
+- The old body is stored **only when the password actually changed**, and always
+  as ciphertext (verbatim from the DB), so the versions table never holds a
+  plaintext password and metadata-only versions don't duplicate it.
 
 Notes / correctness:
 
-- `body_was` is the **persisted** (encrypted) value. `Vault::Password#encrypt!`
-  (a `before_save`) mutates only the in-memory new `body`; it does not touch
-  `body_was`. So callback ordering between `encrypt!` and `stage_version` is
-  irrelevant — `body_was` is always the old ciphertext.
 - `after_update` runs inside ActiveRecord's save transaction, so the version row
   and the key update commit (or roll back) atomically.
-- The guard (`@staged_version` nil) prevents empty/duplicate versions on no-op
-  saves and tags-only edits (which don't dirty any audited column).
+- The guard (`@staged_version` nil) prevents empty versions on no-op saves and
+  tags-only edits (tags are HABTM, set after `@key.save`, and don't dirty the
+  key row).
 - `User.current` is set by Redmine in controller and API contexts; nil-safe for
   console.
 

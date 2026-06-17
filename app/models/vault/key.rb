@@ -9,7 +9,9 @@ module Vault
     has_many :vault_key_versions, class_name: 'Vault::KeyVersion',
              foreign_key: 'vault_key_id', dependent: :destroy
 
-    AUDITED_FIELDS = %w[name login url comment body whitelist sensitive].freeze
+    # Metadata columns audited via ordinary dirty tracking. `body` is handled
+    # separately (semantic compare) because the form resubmits it as plaintext.
+    META_FIELDS = %w[name login url comment whitelist sensitive].freeze
 
     before_update :stage_version
     after_update  :write_version
@@ -75,16 +77,23 @@ module Vault
     end
 
     # Snapshot the PRIOR state while dirty info is available. `*_was` are the
-    # persisted (old) values; body_was is the old ciphertext, unaffected by
-    # Vault::Password#encrypt! (which only mutates the in-memory new body).
+    # persisted (old) metadata values. `body` is compared SEMANTICALLY (old
+    # decrypted vs new decrypted) because Vault::Password decrypts body in-memory
+    # and the edit form resubmits the password as plaintext on every save — so a
+    # raw string diff would flag a "password change" on every metadata edit. The
+    # old body is read as ciphertext straight from the DB row (still the pre-UPDATE
+    # value here) and stored verbatim, only when it actually changed.
     def stage_version
-      changed = AUDITED_FIELDS & changed_attribute_names_to_save
+      changed   = META_FIELDS & changed_attribute_names_to_save
+      old_body  = persisted_body
+      body_diff = BodyCipher.read(old_body) != BodyCipher.read(self.body)
+      changed << 'body' if body_diff
       @staged_version = changed.empty? ? nil : {
         name:           name_was,
         login:          login_was,
         url:            url_was,
         comment:        comment_was,
-        body:           body_was,
+        body:           body_diff ? old_body : nil,
         whitelist:      whitelist_was,
         sensitive:      sensitive_was,
         changed_fields: changed.join(','),
@@ -99,6 +108,13 @@ module Vault
       vault_key_versions.create!(@staged_version) if @staged_version
     ensure
       @staged_version = nil
+    end
+
+    # The body as currently stored in the DB (old value, before this UPDATE).
+    # Bypasses in-memory dirty state, which Vault::Password#decrypt! can leave as
+    # plaintext. nil for non-password keys.
+    def persisted_body
+      Vault::Key.where(id: id).pick(:body)
     end
 
   end

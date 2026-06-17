@@ -24,6 +24,13 @@ class VaultKeyVersionTest < ActiveSupport::TestCase
     assert_nil Vault::KeyVersion.find_by(id: v.id)
   end
 
+  # Reload as the controller would: a fresh record whose body is raw ciphertext.
+  # (Updating the just-created in-memory object would be unrealistic — Vault::Password's
+  # after_save :decrypt! leaves the in-memory body as plaintext.)
+  def reload_key(k)
+    Vault::Key.find(k.id)
+  end
+
   def test_no_version_on_create
     k = Vault::Password.create!(project: @project, name: 'n', body: 'secret')
     assert_equal 0, k.vault_key_versions.count
@@ -31,7 +38,7 @@ class VaultKeyVersionTest < ActiveSupport::TestCase
 
   def test_version_on_body_change_stores_old_ciphertext
     k = Vault::Password.create!(project: @project, name: 'n', body: 'old-secret')
-    k.update!(body: 'new-secret')
+    reload_key(k).update!(body: 'new-secret')
     assert_equal 1, k.vault_key_versions.count
     v = k.vault_key_versions.first
     assert_includes v.changed_field_list, 'body'
@@ -40,9 +47,22 @@ class VaultKeyVersionTest < ActiveSupport::TestCase
     assert_equal 'old-secret', v.decrypted_body
   end
 
+  # The key real-world case: editing only metadata while the form RESUBMITS the
+  # unchanged password as plaintext must NOT record a spurious body change.
+  def test_metadata_edit_resubmitting_same_body_is_not_a_body_change
+    k = Vault::Password.create!(project: @project, name: 'n', login: 'old', body: 'secret')
+    fresh = reload_key(k)
+    fresh.assign_attributes(login: 'new', body: 'secret') # body unchanged, resubmitted
+    fresh.save!
+    v = k.vault_key_versions.first
+    assert_equal ['login'], v.changed_field_list
+    refute v.changed_field_list.include?('body'), 'unchanged password must not count'
+    assert_nil v.body, 'no old password stored on a metadata-only version'
+  end
+
   def test_version_on_metadata_change_only_lists_changed
     k = Vault::Password.create!(project: @project, name: 'n', login: 'old', url: 'http://old')
-    k.update!(login: 'new')
+    reload_key(k).update!(login: 'new')
     v = k.vault_key_versions.first
     assert_equal ['login'], v.changed_field_list
     assert_equal 'old', v.login
@@ -50,7 +70,7 @@ class VaultKeyVersionTest < ActiveSupport::TestCase
 
   def test_no_version_on_noop_save
     k = Vault::Password.create!(project: @project, name: 'n', body: 'secret')
-    k.save!
+    reload_key(k).save!
     assert_equal 0, k.vault_key_versions.count
   end
 
@@ -63,7 +83,7 @@ class VaultKeyVersionTest < ActiveSupport::TestCase
   def test_records_changed_by_and_at
     k = Vault::Password.create!(project: @project, name: 'n', body: 'old')
     User.current = User.find(2)
-    k.update!(body: 'new')
+    reload_key(k).update!(body: 'new')
     v = k.vault_key_versions.first
     assert_equal User.find(2).id, v.changed_by_id
     assert_not_nil v.changed_at
@@ -71,8 +91,8 @@ class VaultKeyVersionTest < ActiveSupport::TestCase
 
   def test_keeps_all_versions
     k = Vault::Password.create!(project: @project, name: 'n', body: 'v1')
-    k.update!(body: 'v2')
-    k.update!(body: 'v3')
+    reload_key(k).update!(body: 'v2')
+    reload_key(k).update!(body: 'v3')
     assert_equal 2, k.vault_key_versions.count
     assert_equal ['v1', 'v2'], k.vault_key_versions.order(:id).map(&:decrypted_body)
   end

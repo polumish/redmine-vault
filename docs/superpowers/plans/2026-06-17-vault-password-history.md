@@ -258,9 +258,21 @@ Record a version on every update that changes an audited column.
 
 - [ ] **Step 1: Write the failing capture tests**
 
-Append to `class VaultKeyVersionTest` (before its final `end`):
+Append to `class VaultKeyVersionTest` (before its final `end`).
+
+**IMPORTANT — reload before updating.** Each test reloads the key with
+`Vault::Key.find(k.id)` before `update!`, to mirror the real controller (which
+operates on a freshly-found record whose `body` is raw ciphertext). Updating the
+just-created in-memory object would test an unrealistic state, because
+`Vault::Password`'s `after_save :decrypt!` leaves the in-memory body as
+plaintext. A small helper keeps this DRY:
 
 ```ruby
+  # Reload as the controller would: a fresh record whose body is raw ciphertext.
+  def reload_key(k)
+    Vault::Key.find(k.id)
+  end
+
   def test_no_version_on_create
     k = Vault::Password.create!(project: @project, name: 'n', body: 'secret')
     assert_equal 0, k.vault_key_versions.count
@@ -268,7 +280,7 @@ Append to `class VaultKeyVersionTest` (before its final `end`):
 
   def test_version_on_body_change_stores_old_ciphertext
     k = Vault::Password.create!(project: @project, name: 'n', body: 'old-secret')
-    k.update!(body: 'new-secret')
+    reload_key(k).update!(body: 'new-secret')
     assert_equal 1, k.vault_key_versions.count
     v = k.vault_key_versions.first
     assert_includes v.changed_field_list, 'body'
@@ -277,9 +289,22 @@ Append to `class VaultKeyVersionTest` (before its final `end`):
     assert_equal 'old-secret', v.decrypted_body
   end
 
+  # The key real-world case: editing only metadata while the form RESUBMITS the
+  # unchanged password as plaintext must NOT record a spurious body change.
+  def test_metadata_edit_resubmitting_same_body_is_not_a_body_change
+    k = Vault::Password.create!(project: @project, name: 'n', login: 'old', body: 'secret')
+    fresh = reload_key(k)
+    fresh.assign_attributes(login: 'new', body: 'secret') # body unchanged, resubmitted
+    fresh.save!
+    v = k.vault_key_versions.first
+    assert_equal ['login'], v.changed_field_list
+    refute v.changed_field_list.include?('body'), 'unchanged password must not count'
+    assert_nil v.body, 'no old password stored on a metadata-only version'
+  end
+
   def test_version_on_metadata_change_only_lists_changed
     k = Vault::Password.create!(project: @project, name: 'n', login: 'old', url: 'http://old')
-    k.update!(login: 'new')
+    reload_key(k).update!(login: 'new')
     v = k.vault_key_versions.first
     assert_equal ['login'], v.changed_field_list
     assert_equal 'old', v.login
@@ -287,7 +312,7 @@ Append to `class VaultKeyVersionTest` (before its final `end`):
 
   def test_no_version_on_noop_save
     k = Vault::Password.create!(project: @project, name: 'n', body: 'secret')
-    k.save!
+    reload_key(k).save!
     assert_equal 0, k.vault_key_versions.count
   end
 
@@ -300,7 +325,7 @@ Append to `class VaultKeyVersionTest` (before its final `end`):
   def test_records_changed_by_and_at
     k = Vault::Password.create!(project: @project, name: 'n', body: 'old')
     User.current = User.find(2)
-    k.update!(body: 'new')
+    reload_key(k).update!(body: 'new')
     v = k.vault_key_versions.first
     assert_equal User.find(2).id, v.changed_by_id
     assert_not_nil v.changed_at
@@ -308,8 +333,8 @@ Append to `class VaultKeyVersionTest` (before its final `end`):
 
   def test_keeps_all_versions
     k = Vault::Password.create!(project: @project, name: 'n', body: 'v1')
-    k.update!(body: 'v2')
-    k.update!(body: 'v3')
+    reload_key(k).update!(body: 'v2')
+    reload_key(k).update!(body: 'v3')
     assert_equal 2, k.vault_key_versions.count
     assert_equal ['v1', 'v2'], k.vault_key_versions.order(:id).map(&:decrypted_body)
   end
@@ -318,33 +343,41 @@ Append to `class VaultKeyVersionTest` (before its final `end`):
 - [ ] **Step 2: Run tests to verify they fail**
 
 Run: `RAILS_ENV=test bin/rails test plugins/vault/test/unit/vault_key_version_test.rb`
-Expected: FAIL — `test_version_on_body_change_*` etc. find 0 versions (no capture yet).
+Expected: FAIL — capture tests find 0 versions (no capture yet).
 
 - [ ] **Step 3: Implement the capture callbacks**
 
-In `app/models/vault/key.rb`, add the constant + callbacks. Put the `AUDITED_FIELDS` constant and the two `before_update`/`after_update` lines near the top of the `class Vault::Key` body (just after the `has_many :vault_key_versions` association added in Task 2):
+In `app/models/vault/key.rb`, add the constant + callbacks. Put the `META_FIELDS` constant and the two `before_update`/`after_update` lines near the top of the `class Vault::Key` body (just after the `has_many :vault_key_versions` association added in Task 2):
 
 ```ruby
-    AUDITED_FIELDS = %w[name login url comment body whitelist sensitive].freeze
+    # Metadata columns audited via ordinary dirty tracking. `body` is handled
+    # separately (semantic compare) because the form resubmits it as plaintext.
+    META_FIELDS = %w[name login url comment whitelist sensitive].freeze
 
     before_update :stage_version
     after_update  :write_version
 ```
 
-Then add the two methods inside the `class Vault::Key` body (e.g. after `sensitivity_ok?`, before the class's closing `end`):
+Then add the methods inside the `class Vault::Key` body (e.g. after `sensitivity_ok?`, before the class's closing `end`):
 
 ```ruby
-    # Snapshot the PRIOR state while dirty info is available. `*_was` are the
-    # persisted (old) values; body_was is the old ciphertext, unaffected by
-    # Vault::Password#encrypt! (which only mutates the in-memory new body).
+    # Snapshot the PRIOR state on update. Metadata uses dirty tracking; body is
+    # compared SEMANTICALLY (old decrypted vs new decrypted) because Vault::Password
+    # decrypts body in-memory and the edit form resubmits the password as plaintext
+    # on every save — so a raw string diff would flag a "password change" on every
+    # metadata edit. The old body is read as ciphertext straight from the DB row
+    # (still the pre-UPDATE value here) and stored verbatim, only when it changed.
     def stage_version
-      changed = AUDITED_FIELDS & changed_attribute_names_to_save
+      changed   = META_FIELDS & changed_attribute_names_to_save
+      old_body  = persisted_body
+      body_diff = BodyCipher.read(old_body) != BodyCipher.read(self.body)
+      changed << 'body' if body_diff
       @staged_version = changed.empty? ? nil : {
         name:           name_was,
         login:          login_was,
         url:            url_was,
         comment:        comment_was,
-        body:           body_was,
+        body:           body_diff ? old_body : nil,
         whitelist:      whitelist_was,
         sensitive:      sensitive_was,
         changed_fields: changed.join(','),
@@ -359,6 +392,13 @@ Then add the two methods inside the `class Vault::Key` body (e.g. after `sensiti
       vault_key_versions.create!(@staged_version) if @staged_version
     ensure
       @staged_version = nil
+    end
+
+    # The body as currently stored in the DB (old value, before this UPDATE).
+    # Bypasses in-memory dirty state, which Vault::Password#decrypt! can leave as
+    # plaintext. nil for non-password keys.
+    def persisted_body
+      Vault::Key.where(id: id).pick(:body)
     end
 ```
 
