@@ -150,3 +150,6 @@ button.vault-jst-pass:hover { color: #c61a1a; }
 .vault-card-close:hover { color: #fff; background: #e74c3c; }
 .vault-card-mtitle { margin: 0 26px 10px 0; }
 .vault-card-mbody { overflow: auto; }
+
+/* sensitive password badge */
+.vault-sensitive-badge { color: #c61a1a; margin-left: 4px; font-size: 90%; }

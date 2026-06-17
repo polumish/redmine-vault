@@ -58,6 +58,7 @@ ru:
       comment: "Комментарий"
       whitelist: "Список доступа"
       id: "ID"
+      sensitive: "Чутливый"
 
     whitelist:
       selected_members: "Выбранные участники"
