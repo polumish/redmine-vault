@@ -1,14 +1,19 @@
-#keys_table a.keys-actions { color: #888; text-decoration: none; font-size: 120%; padding: 0; }
+/* Surfaces, borders and muted text use `var(--jc-*, <light fallback>)` so the
+   plugin adopts the active Redmine theme's palette (incl. the jira-cloud dark
+   mode) and falls back to its original light values under the built-in themes.
+   Semantic colours (action-red, delete-red, overlays/shadows) stay fixed. */
+
+#keys_table a.keys-actions { color: var(--jc-text-muted, #888); text-decoration: none; font-size: 120%; padding: 0; }
 
 #keys_table a.keys-actions:hover, a.keys-actions:active { color: #c61a1a; text-decoration: none; cursor: pointer; font-size: 120%; }
 #tags-list { -webkit-column-count: 3; -moz-column-count: 3; column-count: 3; }
 
 .vault { background-image: url("../images/locked.png"); }
 
-#vault_context_menu li.conext_menu { color: #888; text-decoration: none; font-size: 100%; padding: 0; cursor: pointer; }
-#vault_context_menu a.conext_menu { color: #888; text-decoration: none; font-size: 100%; padding: 0; }
+#vault_context_menu li.conext_menu { color: var(--jc-text-muted, #888); text-decoration: none; font-size: 100%; padding: 0; cursor: pointer; }
+#vault_context_menu a.conext_menu { color: var(--jc-text-muted, #888); text-decoration: none; font-size: 100%; padding: 0; }
 
-a.keys-links { color:#484848; text-decoration: none; }
+a.keys-links { color: var(--jc-text, #484848); text-decoration: none; }
 a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none; cursor: pointer; }
 
 
@@ -59,12 +64,12 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 #vault_whitelist .vault-acl-head label { float: none; margin: 0 0 5px 0; width: auto; font-weight: bold; padding: 0; }
 #vault_whitelist .vault-acl {
   display: inline-block; max-width: 100%;
-  border: 1px solid #d6d9de; border-radius: 6px; background: #f6f7f9; padding: 10px;
+  border: 1px solid var(--jc-border, #d6d9de); border-radius: 6px; background: var(--jc-raised, #f6f7f9); padding: 10px;
 }
 #vault_whitelist .vault-acl table.whitelist_users { margin: 0; padding: 0; width: auto; }
 #vault_whitelist .vault-acl td { padding: 0 8px; vertical-align: top; }
 #vault_whitelist .vault-acl td.buttons { vertical-align: middle; text-align: center; padding: 0 6px; }
-#vault_whitelist .vault-acl label { float: none; margin: 0 0 3px 0; width: auto; display: block; font-weight: normal; color: #555; }
+#vault_whitelist .vault-acl label { float: none; margin: 0 0 3px 0; width: auto; display: block; font-weight: normal; color: var(--jc-text-muted, #555); }
 #vault_whitelist .vault-acl select { width: 190px; min-width: 0; text-align: left; }
 
 /* ---- list toolbar ---- */
@@ -72,7 +77,7 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 .vault-toolbar .vault-search { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .vault-toolbar .vault-search-scope label { margin-right: 8px; font-weight: normal; white-space: nowrap; }
 .vault-toolbar .vault-clear { margin-left: 4px; }
-.vault-id { color: #999; font-size: 85%; font-weight: normal; }
+.vault-id { color: var(--jc-text-muted, #999); font-size: 85%; font-weight: normal; }
 
 /* ---- tidy list table: left-align text, center checkbox, right-align actions ---- */
 #keys_table th, #keys_table td { text-align: left; vertical-align: middle; }
@@ -86,9 +91,9 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 #keys_table label[id^="url_"],
 #keys_table a[id^="url_"],
 #keys_table td.key-password-column label { font-family: monospace; font-size: 95%; }
-#keys_table th, #keys_table td { padding: 7px 10px; border-color: #eee; }
-#keys_table tbody tr.even { background: #fafbfc; }
-#keys_table tbody tr:hover { background: #eef4fb; }
+#keys_table th, #keys_table td { padding: 7px 10px; border-color: var(--jc-border, #eee); }
+#keys_table tbody tr.even { background: var(--jc-sunken, #fafbfc); }
+#keys_table tbody tr:hover { background: var(--jc-row-hover, #eef4fb); }
 #keys_table th:nth-child(2) { width: 28%; }   /* Name */
 #keys_table th:nth-child(3) { width: 32%; }   /* URL */
 #keys_table td:nth-child(3) { white-space: normal; word-break: break-word; }  /* URL wraps */
@@ -96,16 +101,16 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 /* ---- detail card ---- */
 .vault-card .attributes { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; }
 .vault-card .attribute { display: contents; }
-.vault-card .attribute .label { font-weight: bold; color: #555; padding-top: 2px; }
+.vault-card .attribute .label { font-weight: bold; color: var(--jc-text-muted, #555); padding-top: 2px; }
 .vault-card .attribute .value { word-break: break-word; }
 .vault-card .vault-pass-value label { font-family: monospace; }
-.vault-tag-chip { display: inline-block; background: #eef; border: 1px solid #ccd; border-radius: 10px;
+.vault-tag-chip { display: inline-block; background: var(--jc-sunken, #eef); border: 1px solid var(--jc-border, #ccd); border-radius: 10px;
   padding: 0 8px; margin: 0 4px 4px 0; font-size: 85%; text-decoration: none; }
 .vault-card-files, .vault-card-comment { margin-top: 12px; }
 .vault-card-files ul { list-style: none; margin: 4px 0; padding: 0; }
 .vault-card-files li { margin: 2px 0; }
-.vault-att-comment { color: #777; }
-.vault-pass-noaccess, .vault-pass-notfound { color: #999; }
+.vault-att-comment { color: var(--jc-text-muted, #777); }
+.vault-pass-noaccess, .vault-pass-notfound { color: var(--jc-text-muted, #999); }
 
 /* ---- edit-form attachments: align under input column, keep Delete inside the box ---- */
 .edit_vault_key .vault-attachments, .new_vault_key .vault-attachments { clear: left; padding-left: 180px; margin: 6px 0; }
@@ -116,27 +121,27 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 #vault-add-attachment { display: inline-block; margin-top: 4px; }
 
 /* ---- editor toolbar button ---- */
-button.vault-jst-pass { background: transparent; border: none; cursor: pointer; padding: 2px 5px; color: #555; }
+button.vault-jst-pass { background: transparent; border: none; cursor: pointer; padding: 2px 5px; color: var(--jc-text-muted, #555); }
 button.vault-jst-pass:hover { color: #c61a1a; }
 
 /* ---- picker modal ---- */
 #vault-picker-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0,0,0,0.5); z-index: 10000; display: flex; justify-content: center; align-items: flex-start; }
-.vault-picker-box { background: #fff; border-radius: 8px; margin-top: 10vh; padding: 14px; width: 420px;
+.vault-picker-box { background: var(--jc-bg, #fff); border-radius: 8px; margin-top: 10vh; padding: 14px; width: 420px;
   max-width: 90vw; box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
 .vault-picker-title { font-weight: bold; margin-bottom: 8px; }
 .vault-picker-search { width: 100%; box-sizing: border-box; padding: .3em .4em; margin-bottom: 8px; }
 .vault-picker-list { max-height: 50vh; overflow-y: auto; }
-.vault-picker-item { display: block; padding: 5px 6px; text-decoration: none; color: #333; border-radius: 4px; }
-.vault-picker-item:hover { background: #eef; }
-.vault-picker-empty { color: #999; padding: 8px; }
+.vault-picker-item { display: block; padding: 5px 6px; text-decoration: none; color: var(--jc-text, #333); border-radius: 4px; }
+.vault-picker-item:hover { background: var(--jc-sunken, #eef); }
+.vault-picker-empty { color: var(--jc-text-muted, #999); padding: 8px; }
 
 /* {{pass}} card modal */
 .vault-card-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 10000;
 }
 .vault-card-modal {
-  position: absolute; background: #fff; border-radius: 8px;
+  position: absolute; background: var(--jc-bg, #fff); border-radius: 8px;
   padding: 14px 18px; width: 460px; max-width: 92vw; max-height: 80vh;
   display: flex; flex-direction: column;
   box-shadow: 0 12px 36px rgba(0,0,0,0.6);
@@ -144,7 +149,7 @@ button.vault-jst-pass:hover { color: #c61a1a; }
 .vault-card-modal .vault-card { box-shadow: none; border: none; padding: 0; }
 .vault-card-close {
   position: absolute; top: 6px; right: 8px; width: 24px; height: 24px;
-  line-height: 22px; text-align: center; font-size: 15px; color: #999;
+  line-height: 22px; text-align: center; font-size: 15px; color: var(--jc-text-muted, #999);
   cursor: pointer; border-radius: 4px;
 }
 .vault-card-close:hover { color: #fff; background: #e74c3c; }

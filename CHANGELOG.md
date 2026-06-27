@@ -1,3 +1,13 @@
+## Version: 0.10.1 (27.06.2026)
+### Changed
+- **Theme-adaptive CSS.** `assets/stylesheets/vault.css` now draws surfaces,
+  borders and muted text via `var(--jc-*, <light fallback>)` instead of hard-coded
+  light values. Under a theme that exposes those tokens (e.g. the jira-cloud theme,
+  including its dark mode) the keys list, detail card, ACL card, picker and
+  `{{pass}}` modal adopt the active palette; under the built-in Redmine themes they
+  fall back to the original light look. Semantic colours (action/delete red,
+  overlay/shadow) are unchanged. CSS-only — no migration, no behaviour change.
+
 ## Version: 0.10.0 (17.06.2026)
 ### Features
 - **Password change history / field-level audit.** Every update that changes an
