@@ -36,7 +36,7 @@ Redmine::Plugin.register :vault do
   name 'Vault plugin (fork)'
   author 'noshutdown.ru'
   description 'Plugin for keep keys and passwords. Fork of noshutdown.ru/redmine-plugins-vault'
-  version '0.10.0'
+  version '0.10.1'
   url 'https://git.half.net.ua/polumish/redmine-vault'
   author_url 'https://noshutdown.ru/'
 
