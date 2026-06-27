@@ -1,3 +1,12 @@
+## Version: 0.10.2 (27.06.2026)
+### Changed
+- **Readable credential values in the detail card / `{{pass}}` modal.** The
+  `.vault-card` login and password values had no explicit colour, so under a dark
+  theme they inherited a dim/muted colour and were hard to read. Login (new
+  `.vault-login-value` class) and password values are now monospace, bold and use
+  `var(--jc-text, …)` (bright on dark, dark on light); all card values get an
+  explicit readable colour. CSS + one template class only — no migration.
+
 ## Version: 0.10.1 (27.06.2026)
 ### Changed
 - **Theme-adaptive CSS.** `assets/stylesheets/vault.css` now draws surfaces,

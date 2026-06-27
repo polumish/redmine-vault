@@ -102,8 +102,10 @@ a.keys-links:hover, a.keys-links:active { color: #c61a1a; text-decoration: none;
 .vault-card .attributes { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; }
 .vault-card .attribute { display: contents; }
 .vault-card .attribute .label { font-weight: bold; color: var(--jc-text-muted, #555); padding-top: 2px; }
-.vault-card .attribute .value { word-break: break-word; }
-.vault-card .vault-pass-value label { font-family: monospace; }
+.vault-card .attribute .value { word-break: break-word; color: var(--jc-text, #172b4d); }
+/* login + password are credentials: monospace, bold, bright — easy to read on dark */
+.vault-card .vault-login-value,
+.vault-card .vault-pass-value label { font-family: monospace; font-weight: 600; color: var(--jc-text, #172b4d); }
 .vault-tag-chip { display: inline-block; background: var(--jc-sunken, #eef); border: 1px solid var(--jc-border, #ccd); border-radius: 10px;
   padding: 0 8px; margin: 0 4px 4px 0; font-size: 85%; text-decoration: none; }
 .vault-card-files, .vault-card-comment { margin-top: 12px; }
