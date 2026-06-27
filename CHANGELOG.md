@@ -1,3 +1,17 @@
+## Version: 0.10.3 (27.06.2026)
+### Changed
+- **Mobile-responsive keys list + centred detail modal.** On narrow screens
+  (`<=899px`) the six-column passwords table no longer wraps the URL one
+  character per line: each row now stacks into a labelled card — Name (title),
+  URL, Login, Password — with the bulk-select checkbox and any empty URL/Login
+  cell dropped. Field labels are rendered server-side as `data-label` on each
+  cell (from the existing localised column captions), so the responsive CSS can
+  hide the `<thead>` and stay translation-aware. The detail-card modal, which
+  `vault.js` positions next to the clicked row, is re-centred on the viewport.
+  All behaviour lives in `@media (max-width:899px)` in the plugin's own
+  `vault.css` (works under any theme); desktop is unchanged. Template + CSS only
+  — no migration, no behaviour change on desktop.
+
 ## Version: 0.10.2 (27.06.2026)
 ### Changed
 - **Readable credential values in the detail card / `{{pass}}` modal.** The

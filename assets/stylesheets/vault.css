@@ -160,3 +160,57 @@ button.vault-jst-pass:hover { color: #c61a1a; }
 
 /* sensitive password badge */
 .vault-sensitive-badge { color: #c61a1a; margin-left: 4px; font-size: 90%; }
+
+/* ============================================================
+   MOBILE (<=899px) — the keys list has six columns, far too many for a
+   phone, so the URL used to wrap one character per line. Stack each row
+   into a labelled card: Name (title) -> URL -> Login -> Password. The
+   field labels come from each cell's data-label (set server-side in the
+   row partials, so they're localised), which lets us hide the <thead>.
+   The detail-card modal (positioned next to the clicked row by vault.js)
+   is re-centred on the screen. Plugin-owned, so it works under ANY theme.
+   Desktop (>=900px) is completely unchanged — all rules are in the query.
+   ============================================================ */
+@media (max-width: 899px) {
+  #keys_table, #keys_table tbody { display: block; }
+  #keys_table thead { display: none; }
+  #keys_table tr.vault-row {
+    display: block; margin: 0 0 10px; padding: 10px 12px;
+    border: 1px solid var(--jc-border, #dfe1e6);
+    border-radius: var(--jc-radius-card, 8px);
+    background: var(--jc-bg, #fff);
+  }
+  #keys_table tr.vault-row > td {
+    display: block; width: auto; border: 0; padding: 3px 0; text-align: left;
+  }
+  /* drop the cells that don't carry a value on a phone: the bulk-select
+     checkbox and any blank URL/Login (which have no data-label). Name,
+     password and the action buttons are always kept. */
+  #keys_table tr.vault-row > td:not([data-label]):not(.vault-cell-name):not(.key-password-column):not(.buttons) {
+    display: none;
+  }
+  /* field label, from the (localised) column header */
+  #keys_table tr.vault-row > td[data-label]::before {
+    content: attr(data-label); display: block;
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px;
+    color: var(--jc-text-muted, #7a869a); margin-bottom: 1px;
+  }
+  /* name = card title (no label, larger); id stays a muted suffix */
+  #keys_table tr.vault-row > td.vault-cell-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  #keys_table tr.vault-row > td.vault-cell-name .vault-id { font-weight: 400; font-size: 12px; color: var(--jc-text-muted, #7a869a); }
+  /* long URLs / logins wrap instead of blowing out the page width */
+  #keys_table tr.vault-row > td[data-label],
+  #keys_table tr.vault-row > td[data-label] a,
+  #keys_table tr.vault-row > td[data-label] label { white-space: normal; word-break: break-word; }
+  #keys_table tr.vault-row > td.buttons { margin-top: 6px; }
+
+  /* detail card modal: centre on the phone (vault.js inline-positions it
+     absolutely next to the row, so override with !important). */
+  .vault-card-modal {
+    position: fixed !important;
+    left: 50% !important; right: auto !important; top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: calc(100vw - 32px) !important; max-width: 380px !important;
+    max-height: 84vh !important;
+  }
+}
